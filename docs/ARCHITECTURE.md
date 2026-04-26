@@ -224,6 +224,7 @@ Theme:
 - board avec composants dedies (`board-toolbar`, `board-column`, `board-task-card`) pour une densite de barre d'outils plus forte et une hierarchie typographique plus nette des cartes
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
+- en mobile (`< 1024px`): une seule colonne visible a la fois, navigation par swipe horizontal entre colonnes, avec fallback double tap sur une carte pour deplacer la tache vers la colonne suivante
 
 ## 6. Commandes CLI
 
@@ -365,3 +366,4 @@ Derniere mise a jour structurelle:
 - 2026-04-24: ajout d'une authentification API JWT dediee sur `/api/v1` pour clients desktop.
 - 2026-04-24: ajout de GrumPHP (config de base + execution locale des checks qualite).
 - 2026-04-26: ajout de php-parallel-lint pour corriger l'execution de la tache phplint en pre-commit.
+- 2026-04-26: ajout d'une navigation mobile mono-colonne du board (swipe horizontal + fallback double tap vers la colonne de droite).

@@ -35,6 +35,7 @@ Mykanban est un tableau kanban mono-utilisateur pensé pour un usage personnel :
 - CRUD tâches disponible : `/tasks/new`, `/tasks/{id}/edit`, suppression depuis le board
 - Board Kanban disponible : `/board` avec filtres tags AND + tri `manual|smart|urgency|importance|deadline`
 - Drag & drop tâches disponible en permanence sur le board
+- Sur mobile (`< lg`) : une seule colonne affichée à la fois, navigation en swipe horizontal; double tap sur une tâche pour l'envoyer vers la colonne suivante
 - Direction UI: style Airtable-like light (fond clair, texte navy, accent bleu #1b61c9, cartes arrondies et ombres douces)
 - Board affiné en style Airtable: toolbar plus dense, colonnes plus compactes, hiérarchie typographique renforcée sur les cartes
 - Les cartes tâches sont teintées par un dégradé basé sur la couleur de leur premier tag

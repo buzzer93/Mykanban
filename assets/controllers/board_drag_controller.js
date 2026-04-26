@@ -12,6 +12,8 @@ export default class extends Controller {
 
     connect() {
         this.sortables = [];
+        this.boundMoveNextColumn = (event) => this.moveTaskToNextColumn(event);
+        this.element.addEventListener('board:move-next-column', this.boundMoveNextColumn);
 
         this.listTargets.forEach((list) => {
             const sortable = Sortable.create(list, {
@@ -28,8 +30,37 @@ export default class extends Controller {
     }
 
     disconnect() {
+        this.element.removeEventListener('board:move-next-column', this.boundMoveNextColumn);
         this.sortables.forEach((sortable) => sortable.destroy());
         this.sortables = [];
+    }
+
+    async moveTaskToNextColumn(event) {
+        const taskId = Number.parseInt(event.detail?.taskId ?? '', 10);
+        if (Number.isNaN(taskId)) {
+            return;
+        }
+
+        const taskElement = this.element.querySelector(`[data-task-id="${taskId}"]`);
+        const sourceList = taskElement?.closest('[data-column-id]');
+        if (!(sourceList instanceof HTMLElement)) {
+            return;
+        }
+
+        const sourceIndex = this.listTargets.findIndex((list) => list === sourceList);
+        const targetList = this.listTargets[sourceIndex + 1];
+
+        if (!(targetList instanceof HTMLElement)) {
+            return;
+        }
+
+        targetList.appendChild(taskElement);
+
+        await this.persistMove({
+            item: taskElement,
+            to: targetList,
+            newIndex: targetList.children.length - 1,
+        });
     }
 
     async persistMove(event) {

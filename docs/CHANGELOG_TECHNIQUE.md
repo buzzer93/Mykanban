@@ -17,6 +17,15 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-26 — Board mobile en navigation mono-colonne
+
+- Type: feat
+- Quoi: ajout d'un mode mobile du board affichant une seule colonne a la fois (`< lg`), avec navigation par swipe gauche/droite; ajout d'un fallback "double tap" sur une carte pour deplacer la tache vers la colonne de droite via le meme endpoint `POST /api/tasks/move`.
+- Pourquoi: ameliorer l'ergonomie mobile quand le board contient plusieurs colonnes, sans perdre la logique metier de deplacement et de persistance des positions.
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/controllers/board_drag_controller.js`, `assets/stimulus_bootstrap.js`, `templates/board/index.html.twig`, `assets/styles/app.css`, `README.md`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-26 — Release initiale v1 (premier push)
 
 - Type: feat + arch + doc
