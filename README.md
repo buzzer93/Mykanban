@@ -71,13 +71,13 @@ git clone <url> mykanban && cd mykanban
 # 2. Installer les dépendances PHP
 composer install
 
-# 3. Créer la base MySQL locale (une fois)
-# Via Symfony Console :
-php bin/console doctrine:database:create
-
-# 4. Copier et configurer l'environnement
+# 3. Copier et configurer l'environnement
 cp .env .env.local
 # Éditer .env.local : adapter DATABASE_URL si besoin et renseigner APP_SECRET.
+
+# 4. Créer la base MySQL locale (une fois)
+# Via Symfony Console :
+php bin/console doctrine:database:create
 
 # 5. Créer le schéma
 php bin/console doctrine:migrations:migrate
