@@ -1,0 +1,7 @@
+parameters:
+    level: 3
+    paths:
+        - src
+    excludePaths:
+        - src/Kernel.php
+        - tests/bootstrap.php

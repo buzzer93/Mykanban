@@ -1,0 +1,8 @@
+api_platform:
+    title: Mykanban API
+    version: 0.1.0
+    defaults:
+        stateless: true
+        security: "is_granted('IS_AUTHENTICATED_FULLY')"
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']

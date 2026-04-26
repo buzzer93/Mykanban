@@ -1,0 +1,29 @@
+
+###> symfony/framework-bundle ###
+# Seul `.env` est versionné (valeurs par défaut / template public).
+# Tous les autres fichiers d'environnement restent locaux / privés.
+/.env.*
+!/.env.dist
+/.env.local.php
+/config/secrets/prod/prod.decrypt.private.php
+/config/reference.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+### AI tools ###
+/CLAUDE.md
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle tâche{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'board' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card p-6">
+        <h1 class="text-lg font-semibold text-[var(--kraken-black)]">Créer une tâche</h1>
+        <p class="mt-1 text-sm text-[var(--kraken-gray)]">La tâche est ajoutée dans la première colonne, en fin de liste.</p>
+
+        <div class="mt-4">
+            {% include 'tasks/_form.html.twig' with { form: form, submit_label: 'Créer' } %}
+        </div>
+    </section>
+{% endblock %}

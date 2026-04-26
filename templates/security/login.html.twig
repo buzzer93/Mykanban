@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — Mykanban{% endblock %}
+
+{% block body %}
+    <div class="flex min-h-[70vh] items-center justify-center">
+        <div class="ui-card w-full max-w-md p-6 sm:p-8">
+            <h1 class="mb-6 text-center text-2xl font-semibold text-[var(--kraken-black)]">Mykanban</h1>
+
+            {% if error %}
+                <div class="mb-4 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('app_login') }}" novalidate class="space-y-4">
+                <div>
+                    <label for="inputIdentifier" class="mb-1 block text-sm font-medium text-[var(--kraken-gray)]">Identifiant</label>
+                    <input
+                        type="text"
+                        id="inputIdentifier"
+                        name="_username"
+                        value="{{ last_username }}"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder="Ton identifiant"
+                        class="block w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] shadow-sm focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]"
+                    >
+                </div>
+
+                <div>
+                    <label for="inputPassword" class="mb-1 block text-sm font-medium text-[var(--kraken-gray)]">Mot de passe</label>
+                    <input
+                        type="password"
+                        id="inputPassword"
+                        name="_password"
+                        required
+                        autocomplete="current-password"
+                        class="block w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] shadow-sm focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]"
+                    >
+                </div>
+
+                <label class="flex items-center gap-2 text-sm text-[var(--kraken-gray)]">
+                    <input type="checkbox" name="_remember_me" checked
+                           class="h-4 w-4 rounded border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] text-[var(--kraken-purple)] focus:ring-[var(--kraken-purple)]">
+                    Rester connecté (15 jours)
+                </label>
+
+                <input
+                    type="hidden"
+                    name="_csrf_token"
+                    value="{{ csrf_token('authenticate') }}"
+                >
+
+                <button type="submit" class="ui-btn-primary w-full px-4 py-2">
+                    Se connecter
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

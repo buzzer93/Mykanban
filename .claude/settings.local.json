@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vendor/bin/grumphp run *)",
+      "Bash(composer require *)",
+      "Bash(vendor/bin/phpstan analyse *)",
+      "Bash(composer config *)",
+      "Bash(composer remove *)",
+      "Bash(git rm *)"
+    ]
+  }
+}

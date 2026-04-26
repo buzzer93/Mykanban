@@ -1,0 +1,70 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Provider Doctrine branché sur l'entité App\Entity\User (username comme identifiant de login).
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+
+    firewalls:
+        dev:
+            # Les outils de dev et assets restent toujours accessibles.
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+        api:
+            pattern: ^/api/v1
+            stateless: true
+            provider: app_user_provider
+            custom_authenticators:
+                - App\Security\ApiJwtAuthenticator
+        main:
+            lazy: true
+            provider: app_user_provider
+
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                # CSRF stateless : le token "authenticate" est injecté dans le template de login.
+                enable_csrf: true
+                default_target_path: app_board
+                username_parameter: _username
+                password_parameter: _password
+
+            logout:
+                path: app_logout
+                target: app_login
+                # CSRF stateless sur le logout également (cf. config/packages/csrf.yaml).
+                enable_csrf: true
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 1296000 # 15 jours (15 * 24 * 3600)
+                path: /
+                # Coché par défaut : usage solo, confort prioritaire.
+                always_remember_me: true
+                secure: auto
+                samesite: lax
+                # Le cookie survit à la fermeture du navigateur.
+                remember_me_parameter: _remember_me
+
+    # L'ordre compte : /login doit être public, tout le reste exige une auth.
+    access_control:
+        - { path: ^/api/v1/login_check$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: IS_AUTHENTICATED_REMEMBERED }
+
+when@test:
+    security:
+        password_hashers:
+            # Cost ramené au minimum pour accélérer les tests.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

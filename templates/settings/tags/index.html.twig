@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings — Tags{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'tags' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card p-6">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <h1 class="text-lg font-semibold text-[var(--kraken-black)]">Settings Tags</h1>
+                <p class="mt-1 text-sm text-[var(--kraken-gray)]">Crée, édite, supprime et réordonne les tags.</p>
+            </div>
+            <a href="{{ path('settings_tags_new') }}" class="ui-btn-primary">Nouveau tag</a>
+        </div>
+
+        <ul class="mt-6 space-y-3"
+            data-controller="sortable-reorder"
+            data-sortable-reorder-url-value="{{ path('api_settings_tags_reorder') }}"
+            data-sortable-reorder-token-value="{{ csrf_token('reorder_tags') }}">
+            {% for tag in tags %}
+                <li class="rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] p-4" data-id="{{ tag.id }}">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <button type="button" class="drag-handle cursor-grab rounded-[10px] border border-[var(--kraken-border)] bg-[var(--kraken-white)] px-2 py-1 text-xs text-[var(--kraken-gray)]" title="Déplacer">↕</button>
+                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white" style="background-color: {{ tag.color }};">
+                                {{ tag.name }}
+                            </span>
+                            <span class="text-xs text-[var(--kraken-gray)]">Position: {{ tag.position }} · tâches: {{ tag.tasks|length }}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <a href="{{ path('settings_tags_edit', {id: tag.id}) }}" class="ui-btn-edit">Éditer</a>
+                            <form method="post" action="{{ path('settings_tags_delete', {id: tag.id}) }}">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('submit') }}">
+                                <button type="submit" class="ui-btn-danger">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% else %}
+                <li class="rounded-[12px] border border-dashed border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] p-4 text-sm text-[var(--kraken-gray)]">Aucun tag.</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

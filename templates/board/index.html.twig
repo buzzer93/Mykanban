@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mykanban — Board{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'board' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card p-3.5">
+        <form method="get" action="{{ path('app_board') }}" class="space-y-3" data-controller="board-sort">
+            <div class="board-toolbar">
+                <div class="board-toolbar-group">
+                    <label for="sort" class="board-toolbar-label">Tri</label>
+                    <select id="sort" name="sort" data-board-sort-target="select" data-action="change->board-sort#submit"
+                            class="ui-select shadow-[var(--kraken-shadow-micro)]">
+                        {% for sortChoice in sortChoices %}
+                            <option value="{{ sortChoice }}" {{ sortChoice == sort ? 'selected' : '' }}>
+                                {{ sortChoice|capitalize }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <a href="{{ path('app_board', { sort: sort }) }}" class="ui-btn">
+                        Reset filtres
+                    </a>
+                </div>
+
+                <a href="{{ path('tasks_new') }}"
+                   class="ui-btn-primary">
+                    Nouvelle tâche
+                </a>
+            </div>
+
+            <div class="board-filter-row">
+                {% for tag in tags %}
+                    {% set checked = tag.id in selectedTagIds %}
+                    {% set displayTagColor = tag.color|lower in ['#ef4444', '#f87171', '#dc2626', '#b91c1c', '#ff0000', '#e11d48', '#f43f5e'] ? '#7132f5' : tag.color %}
+                    <label class="ui-chip cursor-pointer gap-1.5 {{ checked ? 'border-[var(--kraken-purple)] bg-[var(--kraken-purple)] text-white' : 'bg-[var(--kraken-white)] text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)]' }}">
+                        <input type="checkbox" name="tags[]" value="{{ tag.id }}" {{ checked ? 'checked' : '' }} class="sr-only" data-action="change->board-sort#submit">
+                        <span class="h-2 w-2 rounded-full" style="background-color: {{ displayTagColor }};"></span>
+                        {{ tag.name }}
+                    </label>
+                {% else %}
+                    <span class="text-xs ui-muted">Aucun tag configuré.</span>
+                {% endfor %}
+            </div>
+        </form>
+    </section>
+
+    <section class="mt-6">
+        <p class="mb-3 text-xs ui-muted">Drag & drop actif.</p>
+
+        <div class="board-columns"
+             data-controller="board-drag"
+             data-board-drag-url-value="{{ moveTasksUrl }}"
+             data-board-drag-token-value="{{ moveTasksToken }}">
+            {% for item in kanbanColumns %}
+                {% set column = item.column %}
+                {% set tasks = item.tasks %}
+
+                <article class="ui-card board-column">
+                    <div class="board-column-header">
+                        <h2 class="board-column-title">{{ column.name }}</h2>
+                        <span class="board-column-count">{{ tasks|length }}</span>
+                    </div>
+
+                    <div class="board-task-list" data-board-drag-target="list" data-column-id="{{ column.id }}">
+                        {% for task in tasks %}
+                            {% set primaryTag = task.tags|first %}
+                            {% set primaryTagColor = primaryTag is not empty and primaryTag.color|lower in ['#ef4444', '#f87171', '#dc2626', '#b91c1c', '#ff0000', '#e11d48', '#f43f5e'] ? '#7132f5' : (primaryTag is not empty ? primaryTag.color : '') %}
+                            <div class="board-task-card" data-task-id="{{ task.id }}"
+                                 style="background: {% if primaryTag is not empty %}linear-gradient(140deg, {{ primaryTagColor }}40 0%, var(--kraken-surface-soft) 70%, var(--kraken-white) 90%){% else %}var(--kraken-surface-soft){% endif %};">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-start gap-2">
+                                        <h3 class="board-task-title">{{ task.title }}</h3>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <a href="{{ path('tasks_edit', { id: task.id }) }}" class="ui-btn-edit cursor-pointer">Éditer</a>
+                                    </div>
+                                </div>
+
+                                {% if task.description %}
+                                    <p class="board-task-description">{{ task.description }}</p>
+                                {% endif %}
+
+                                <div class="board-tag-list">
+                                    {% for tag in task.tags %}
+                                        {% set badgeTagColor = tag.color|lower in ['#ef4444', '#f87171', '#dc2626', '#b91c1c', '#ff0000', '#e11d48', '#f43f5e'] ? '#7132f5' : tag.color %}
+                                        <span class="board-tag">
+                                            <span class="h-1.5 w-1.5 rounded-full" style="background-color: {{ badgeTagColor }};"></span>
+                                            {{ tag.name }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="board-meta-row">
+                                    <span class="board-meta-badge">Imp {{ task.importance }}</span>
+                                    <span class="board-meta-badge">Urg auto {{ task.autoUrgencyLevel }}/5</span>
+                                    {% if task.deadlineAt is not null %}
+                                        {% if task.doneAt is not null %}
+                                            <span class="board-status-badge board-status-done">Terminée</span>
+                                        {% else %}
+                                            {% set secondsDiff = task.deadlineAt|date('U') - 'now'|date('U') %}
+                                            {% if secondsDiff < 0 %}
+                                                <span class="board-status-badge board-status-late">En retard</span>
+                                            {% else %}
+                                                {% set daysLeft = (secondsDiff / 86400)|round(0, 'ceil') %}
+                                                <span class="board-status-badge board-status-due">J-{{ daysLeft }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="board-meta-badge">Sans deadline</span>
+                                    {% endif %}
+                                </div>
+
+                                <form method="post" action="{{ path('tasks_delete', { id: task.id }) }}" class="mt-2.5">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('submit') }}">
+                                    <button type="submit" class="ui-btn-danger cursor-pointer">Supprimer</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="board-empty-state">
+                                Aucune tâche.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

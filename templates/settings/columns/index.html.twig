@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings — Colonnes{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'columns' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card p-6">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <h1 class="text-lg font-semibold text-[var(--kraken-black)]">Settings Colonnes</h1>
+                <p class="mt-1 text-sm text-[var(--kraken-gray)]">Crée, édite, supprime et réordonne les colonnes (drag & drop).</p>
+            </div>
+            <a href="{{ path('settings_columns_new') }}" class="ui-btn-primary">Nouvelle colonne</a>
+        </div>
+
+        <ul class="mt-6 space-y-3"
+            data-controller="sortable-reorder"
+            data-sortable-reorder-url-value="{{ path('api_settings_columns_reorder') }}"
+            data-sortable-reorder-token-value="{{ csrf_token('reorder_columns') }}">
+            {% for column in columns %}
+                <li class="rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] p-4" data-id="{{ column.id }}">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <button type="button" class="drag-handle cursor-grab rounded-[10px] border border-[var(--kraken-border)] bg-[var(--kraken-white)] px-2 py-1 text-xs text-[var(--kraken-gray)]" title="Déplacer">↕</button>
+                            <div>
+                                <p class="font-medium text-[var(--kraken-black)]">{{ column.name }}</p>
+                                <p class="text-xs text-[var(--kraken-gray)]">
+                                    Position: {{ column.position }} · isDone: {{ column.isDone ? 'oui' : 'non' }} · tâches: {{ column.tasks|length }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <a href="{{ path('settings_columns_edit', {id: column.id}) }}" class="ui-btn-edit">Éditer</a>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{{ path('settings_columns_delete', {id: column.id}) }}" class="mt-3 flex flex-wrap items-center gap-2">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('submit') }}">
+
+                        {% if column.tasks|length > 0 %}
+                            <label class="text-xs text-[var(--kraken-gray)]">Migrer les tâches vers:</label>
+                            <select name="target_column_id" class="rounded-[10px] border border-[var(--kraken-border)] bg-[var(--kraken-white)] px-2 py-1 text-sm text-[var(--kraken-black)]">
+                                <option value="">Choisir...</option>
+                                {% for target in columns %}
+                                    {% if target.id != column.id %}
+                                        <option value="{{ target.id }}">{{ target.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+
+                        <button type="submit" class="ui-btn-danger">Supprimer</button>
+                    </form>
+                </li>
+            {% else %}
+                <li class="rounded-[12px] border border-dashed border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] p-4 text-sm text-[var(--kraken-gray)]">Aucune colonne.</li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

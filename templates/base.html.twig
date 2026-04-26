@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Mykanban{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🗂️</text></svg>">
+        <script>
+            (function () {
+                var key = 'mykanban_theme';
+                var stored;
+                try {
+                    stored = localStorage.getItem(key);
+                } catch (e) {
+                    stored = null;
+                }
+
+                var theme = (stored === 'dark' || stored === 'light')
+                    ? stored
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+                document.documentElement.setAttribute('data-theme', theme);
+            })();
+        </script>
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="h-full bg-[var(--kraken-white)] text-[var(--kraken-black)] antialiased">
+        <div class="min-h-full flex flex-col">
+            {% block header %}{% endblock %}
+
+            <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="mb-4 rounded-xl border px-4 py-3 text-sm shadow-sm
+                            {% if label == 'error' %}border-red-300 bg-red-50 text-red-800
+                            {% elseif label == 'success' %}border-emerald-300 bg-emerald-50 text-emerald-800
+                            {% else %}border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] text-[var(--kraken-black)]{% endif %}"
+                            role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% block body %}{% endblock %}
+            </main>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,40 @@
+<header class="bg-[var(--kraken-white)] border-b border-[var(--kraken-border)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <span class="text-xl font-semibold text-[var(--kraken-black)]">Mykanban</span>
+            <span class="text-sm text-[var(--kraken-silver)] hidden sm:inline">·</span>
+            <span class="text-sm text-[var(--kraken-silver)] hidden sm:inline">{{ app.user.userIdentifier }}</span>
+        </div>
+
+        <nav class="flex items-center gap-2">
+            <a href="{{ path('app_board') }}"
+               class="inline-flex items-center rounded-[12px] px-3 py-1.5 text-sm font-medium {{ active|default('') == 'board' ? 'bg-[var(--kraken-purple)] text-white' : 'border border-[var(--kraken-border)] bg-[var(--kraken-white)] text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)]' }}">
+                Board
+            </a>
+            <a href="{{ path('settings_columns_index') }}"
+               class="inline-flex items-center rounded-[12px] px-3 py-1.5 text-sm font-medium {{ active|default('') == 'columns' ? 'bg-[var(--kraken-purple)] text-white' : 'border border-[var(--kraken-border)] bg-[var(--kraken-white)] text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)]' }}">
+                Colonnes
+            </a>
+            <a href="{{ path('settings_tags_index') }}"
+               class="inline-flex items-center rounded-[12px] px-3 py-1.5 text-sm font-medium {{ active|default('') == 'tags' ? 'bg-[var(--kraken-purple)] text-white' : 'border border-[var(--kraken-border)] bg-[var(--kraken-white)] text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)]' }}">
+                Tags
+            </a>
+            <button type="button"
+                    data-controller="theme"
+                    data-action="click->theme#toggle"
+                    class="inline-flex items-center gap-2 rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-white)] px-3 py-1.5 text-sm font-medium text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)] focus:outline-none focus:ring-2 focus:ring-[var(--kraken-purple)] focus:ring-offset-2 focus:ring-offset-[var(--kraken-white)]"
+                    aria-pressed="false"
+                    title="Basculer le theme">
+                <span aria-hidden="true">◐</span>
+                <span data-theme-target="label">Theme sombre</span>
+            </button>
+            <form method="post" action="{{ path('app_logout') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                <button type="submit"
+                        class="inline-flex items-center rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-white)] px-3 py-1.5 text-sm font-medium text-[var(--kraken-black)] hover:bg-[var(--kraken-purple-subtle)] focus:outline-none focus:ring-2 focus:ring-[var(--kraken-purple)] focus:ring-offset-2 focus:ring-offset-[var(--kraken-white)]">
+                    Se déconnecter
+                </button>
+            </form>
+        </nav>
+    </div>
+</header>

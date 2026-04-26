@@ -1,0 +1,70 @@
+{{ form_start(form, { attr: { class: 'space-y-4' } }) }}
+    <div>
+        {{ form_label(form.title, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+        {{ form_widget(form.title, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div>
+        {{ form_label(form.description, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+        {{ form_widget(form.description, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]', rows: 4 } }) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+    <div>
+        {{ form_label(form.tags, null, { label_attr: { class: 'mb-2 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+        <div class="flex flex-wrap gap-2">
+            {% for child in form.tags %}
+                {% set dataColor = child.vars.attr['data-color']|default('#334155') %}
+                <label class="inline-flex items-center gap-2 rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)]">
+                    {{ form_widget(child, { attr: { class: 'rounded border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] text-[var(--kraken-purple)] focus:ring-[var(--kraken-purple)]' } }) }}
+                    <span class="h-2.5 w-2.5 rounded-full" style="background-color: {{ dataColor }};"></span>
+                    {{ child.vars.label }}
+                </label>
+            {% endfor %}
+        </div>
+        {{ form_errors(form.tags) }}
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+        <div>
+            {{ form_label(form.importance, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+            {{ form_widget(form.importance, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+            {{ form_errors(form.importance) }}
+        </div>
+        {% if form.deadlineMode is defined %}
+            <div>
+                {{ form_label(form.deadlineMode, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.deadlineMode, { attr: { class: 'ui-select w-full px-3 py-2 text-sm' } }) }}
+                {{ form_errors(form.deadlineMode) }}
+            </div>
+            <div>
+                {{ form_label(form.deadlineAmount, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.deadlineAmount, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+                {{ form_errors(form.deadlineAmount) }}
+            </div>
+            <div>
+                {{ form_label(form.deadlineUnit, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.deadlineUnit, { attr: { class: 'ui-select w-full px-3 py-2 text-sm' } }) }}
+                {{ form_errors(form.deadlineUnit) }}
+            </div>
+            <div class="sm:col-span-3">
+                {{ form_label(form.deadlineAt, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.deadlineAt, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+                {{ form_errors(form.deadlineAt) }}
+                <p class="mt-1 text-xs ui-muted">Choisis soit durée + unité, soit une date/heure directe via le mode sélectionné.</p>
+            </div>
+        {% else %}
+            <div>
+                {{ form_label(form.deadlineAt, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.deadlineAt, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+                {{ form_errors(form.deadlineAt) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center gap-2">
+        <button type="submit" class="ui-btn-primary">{{ submit_label|default('Enregistrer') }}</button>
+        <a href="{{ path('app_board') }}" class="ui-btn">Retour board</a>
+    </div>
+{{ form_end(form) }}

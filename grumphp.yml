@@ -1,0 +1,69 @@
+grumphp:
+  # Stoppe immédiatement si une tâche échoue
+  stop_on_failure: true
+  
+  # Configuration pour l’auto-fix (php-cs-fixer)
+  fixer:
+    enabled: true
+    fix_by_default: true   # Corrige automatiquement les erreurs de style quand c’est possible
+
+  tasks:
+    # Vérifie la syntaxe de tous les fichiers PHP
+    phplint:
+      triggered_by: [php]  # Fichiers concernés
+      exclude: ['vendor', 'var']  # Répertoires ignorés
+
+    # Exécute les tests unitaires avant chaque commit
+    phpunit:
+      config_file: phpunit.dist.xml   # Fichier de config PHPUnit
+      always_execute: true            # Toujours exécuter, même si aucun test n’a changé
+
+    # Analyse statique pour détecter les erreurs potentielles
+    phpstan:
+      configuration: phpstan.dist.neon  # Fichier de config PHPStan
+      memory_limit: 512M               # Augmente la limite mémoire pour éviter les OOM
+
+    # Vérifie et corrige le style de code PHP (PSR-12, Symfony, etc.)
+    phpcsfixer:
+      config: '.php-cs-fixer.dist.php'  # Règles de formatage
+      allow_risky: true                 # Autorise certaines règles avancées
+      verbose: true                     # Affiche les détails
+      diff: true                        # Montre les modifications appliquées
+      triggered_by: [php]               # Ne concerne que les fichiers PHP
+
+    # Vérifie la syntaxe des fichiers YAML (config, traductions, etc.)
+    yamllint:
+      parse_custom_tags: true
+      ignore_patterns: ['vendor', 'var']
+
+    # Vérifie la validité JSON (clé dupliquée, mauvaise syntaxe)
+    jsonlint:
+      detect_key_conflicts: true
+      ignore_patterns: ['vendor', 'var']
+
+    # Vérifie la validité XML (routes, services, etc.)
+    xmllint:
+      ignore_patterns: ['vendor', 'var']
+
+    # Analyse la qualité du code (complexité, duplication, nommage…)
+    phpmd:
+      ruleset: ['phpmd.dist.xml']
+      exclude: ['vendor', 'var', 'tests', 'migrations', 'src/Entity', 'src/DataFixtures', 'src/Repository', 'src/Twig']  # Dossiers ignorés
+      triggered_by: [php]
+
+    # Vérifie la cohérence Composer (fichier + lock)
+    composer:
+      no_check_publish: true
+      metadata:
+        priority: 40
+
+    # Empêche de commit des fonctions de debug ou traces indésirables
+    git_blacklist:
+      keywords:
+        - "dump("
+        - "var_dump("
+        - "print_r("
+        - "die("
+        - "exit("
+        - "console.log"
+      triggered_by: [php, js, twig]   # Analyse aussi les fichiers JS et Twig

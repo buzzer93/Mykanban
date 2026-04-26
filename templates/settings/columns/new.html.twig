@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle colonne{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'columns' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card max-w-xl p-6">
+        <h1 class="text-lg font-semibold text-[var(--kraken-black)]">Créer une colonne</h1>
+
+        {{ form_start(form, { attr: { class: 'mt-4 space-y-4' } }) }}
+            <div>
+                {{ form_label(form.name, null, { label_attr: { class: 'mb-1 block text-sm font-medium text-[var(--kraken-gray)]' } }) }}
+                {{ form_widget(form.name, { attr: { class: 'w-full rounded-[12px] border border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] px-3 py-2 text-sm text-[var(--kraken-black)] focus:border-[var(--kraken-purple)] focus:outline-none focus:ring-1 focus:ring-[var(--kraken-purple)]' } }) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="flex items-center gap-2">
+                {{ form_widget(form.isDone, { attr: { class: 'rounded border-[var(--kraken-border)] bg-[var(--kraken-surface-soft)] text-[var(--kraken-purple)] focus:ring-[var(--kraken-purple)]' } }) }}
+                {{ form_label(form.isDone, null, { label_attr: { class: 'text-sm text-[var(--kraken-gray)]' } }) }}
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button type="submit" class="ui-btn-primary">Créer</button>
+                <a href="{{ path('settings_columns_index') }}" class="ui-btn">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

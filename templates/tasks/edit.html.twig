@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Éditer tâche{% endblock %}
+
+{% block header %}
+    {% include '_app_header.html.twig' with { active: 'board' } %}
+{% endblock %}
+
+{% block body %}
+    <section class="ui-card p-6">
+        <h1 class="text-lg font-semibold text-[var(--kraken-black)]">Éditer la tâche</h1>
+        <p class="mt-1 text-sm text-[var(--kraken-gray)]">{{ task.title }}</p>
+
+        <div class="mt-4">
+            {% include 'tasks/_form.html.twig' with { form: form, submit_label: 'Enregistrer' } %}
+        </div>
+    </section>
+{% endblock %}
