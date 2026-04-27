@@ -224,6 +224,11 @@
 		touch-action: pan-x;
 	}
 
+	.board-mobile-mode .board-columns.board-mobile-no-snap {
+		scroll-snap-type: none;
+		scroll-behavior: auto;
+	}
+
 	.board-mobile-mode .board-columns::-webkit-scrollbar {
 		display: none;
 	}

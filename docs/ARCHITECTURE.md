@@ -224,7 +224,7 @@ Theme:
 - board avec composants dedies (`board-toolbar`, `board-column`, `board-task-card`) pour une densite de barre d'outils plus forte et une hierarchie typographique plus nette des cartes
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
-- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, navigation horizontale native via `overflow-x` + `scroll-snap` (mode `proximity` pour eviter un declenchement trop agressif), et boutons `←` / `→` sur chaque carte pour changer de colonne sans drag tactile
+- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, navigation horizontale native via `overflow-x` + `scroll-snap`, avec validation du changement de colonne par seuil de swipe (distance minimale) pour eviter les bascules accidentelles, et boutons `←` / `→` sur chaque carte pour changer de colonne sans drag tactile
 - SortableJS est reserve au desktop ; en mobile tactile, le double tap est retire, le swipe gere la navigation des colonnes, et les boutons `←` / `→` rendent le changement de colonne des taches explicite
 - Les controllers front ont ete simplifies pour ce mode: `board_mobile_controller` pilote le layout mobile et l'index actif base sur le scroll natif; `board_drag_controller` pilote uniquement Sortable desktop et les deplacements explicites par boutons de carte
 
@@ -376,3 +376,4 @@ Derniere mise a jour structurelle:
 - 2026-04-27: correction du slide mobile du board — abandon d'un deplacement en pourcentage du track (source de decalage/colonne non affichee) au profit d'un deplacement en pixels base sur la largeur effective d'une colonne.
 - 2026-04-27: refactor controllers board mobile/drag — suppression du code legacy de drag-to-edge et des evenements inter-controllers devenus inutiles, separation claire des responsabilites (swipe mobile d'un cote, drag desktop + boutons task de l'autre).
 - 2026-04-27: migration du swipe mobile vers un scroll natif `scroll-snap` (abandon du swipe detecte en JS + transform), ce qui elimine les effets "swipe detecte mais colonne non affichee" observes sur mobile reel.
+- 2026-04-27: tuning de sensibilite mobile — ajout d'un seuil explicite avant changement de colonne (distance minimale en px et ratio viewport) pour limiter les changements non intentionnels.

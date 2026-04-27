@@ -25,6 +25,7 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
   - Passage a une navigation de colonnes mobile native via `overflow-x` + `scroll-snap`.
   - Suivi de l'index actif aligne sur la position de scroll reelle.
   - Reglage de sensibilite: `scroll-snap-type` passe de `mandatory` a `proximity` pour limiter les changements de colonne accidentels.
+  - Reglage complementaire: ajout d'un seuil de validation avant changement de colonne (distance minimale absolue + relative au viewport), avec desactivation temporaire du snap pendant le geste.
 - Pourquoi: eliminer les regressions "swipe detecte mais colonne non affichee" et simplifier fortement la logique mobile.
 - Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
 
