@@ -17,6 +17,19 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Stabilisation definitive mobile: retour scroll-snap natif
+
+- Type: fix + refactor
+- Quoi:
+  - Retrait de la logique gesture JS custom dans `board_mobile_controller`.
+  - Retour a une navigation mobile native via `overflow-x` + `scroll-snap`.
+  - Ajout de `scroll-snap-stop: always` sur les colonnes pour limiter les sauts de plusieurs colonnes.
+  - Alignement initial du board sur la premiere colonne non vide au chargement mobile.
+- Pourquoi: corriger les regressions persistantes (colonnes perçues comme disparues, sauts involontaires) et revenir a un comportement mobile stable et previsible.
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Refactor complet swipe mobile anti-skip
 
 - Type: refactor + fix

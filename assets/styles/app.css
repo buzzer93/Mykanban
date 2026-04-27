@@ -214,12 +214,21 @@
 		flex-wrap: nowrap;
 		gap: 0;
 		padding-bottom: 0;
-		overflow: hidden;
+		overflow-x: auto;
+		overflow-y: hidden;
 		width: 100%;
 		min-height: 1px;
-		touch-action: pan-y;
-		will-change: transform;
-		transition: transform 220ms ease-out;
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+		touch-action: pan-x;
+	}
+
+	.board-mobile-mode .board-columns::-webkit-scrollbar {
+		display: none;
+	}
+
+	.board-mobile-mode .board-columns {
+		scrollbar-width: none;
 	}
 
 	.board-column {
@@ -238,6 +247,8 @@
 		width: 100%;
 		min-width: 100%;
 		min-height: 1px;
+		scroll-snap-align: start;
+		scroll-snap-stop: always;
 	}
 
 	.board-column-header {
