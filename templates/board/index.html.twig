@@ -52,12 +52,8 @@
              data-controller="board-drag board-mobile"
              data-board-drag-url-value="{{ moveTasksUrl }}"
              data-board-drag-token-value="{{ moveTasksToken }}">
-        <div class="mb-3 flex items-center gap-2 text-xs ui-muted">
-            <p>Drag & drop actif.</p>
-            <p class="hidden" data-board-mobile-target="hint">
-                Drag une carte vers le bord pour passer à la colonne d'à côté.
-            </p>
-            <div class="hidden ml-auto board-mobile-nav" data-board-mobile-target="navBar">
+        <div class="mb-3 flex items-center justify-end">
+            <div class="hidden board-mobile-nav" data-board-mobile-target="navBar">
                 <button type="button"
                         class="board-mobile-nav-btn"
                         data-action="board-mobile#previous"
@@ -94,6 +90,18 @@
                                         <h3 class="board-task-title">{{ task.title }}</h3>
                                     </div>
                                     <div class="flex items-center gap-1">
+                                        <div class="board-mobile-task-actions" aria-label="Deplacer la tache entre colonnes">
+                                            <button type="button"
+                                                    class="board-mobile-task-move"
+                                                    data-action="click->board-drag#moveTaskToPreviousColumn"
+                                                    data-task-id="{{ task.id }}"
+                                                    aria-label="Deplacer la tache vers la colonne precedente">←</button>
+                                            <button type="button"
+                                                    class="board-mobile-task-move"
+                                                    data-action="click->board-drag#moveTaskToNextColumn"
+                                                    data-task-id="{{ task.id }}"
+                                                    aria-label="Deplacer la tache vers la colonne suivante">→</button>
+                                        </div>
                                         <a href="{{ path('tasks_edit', { id: task.id }) }}" class="ui-btn-edit cursor-pointer">Éditer</a>
                                     </div>
                                 </div>
@@ -114,7 +122,9 @@
 
                                 <div class="board-meta-row">
                                     <span class="board-meta-badge">Imp {{ task.importance }}</span>
-                                    <span class="board-meta-badge">Urg auto {{ task.autoUrgencyLevel }}/5</span>
+                                    {% if task.autoUrgencyLevel >= 4 %}
+                                        <span class="board-status-badge board-status-late">Urgent</span>
+                                    {% endif %}
                                     {% if task.deadlineAt is not null %}
                                         {% if task.doneAt is not null %}
                                             <span class="board-status-badge board-status-done">Terminée</span>

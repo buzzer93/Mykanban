@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 const STORAGE_KEY = 'mykanban_theme';
 
 export default class extends Controller {
-    static targets = ['label'];
+    static targets = ['icon'];
 
     connect() {
         this.applyStoredOrPreferredTheme();
@@ -56,14 +56,13 @@ export default class extends Controller {
     render() {
         const darkModeActive = this.currentTheme() === 'dark';
 
-        if (this.hasLabelTarget) {
-            this.labelTarget.textContent = darkModeActive ? 'Theme clair' : 'Theme sombre';
+        if (this.hasIconTarget) {
+            this.iconTarget.textContent = darkModeActive ? '☀' : '◐';
         }
 
+        const nextThemeLabel = darkModeActive ? 'clair' : 'sombre';
         this.element.setAttribute('aria-pressed', darkModeActive ? 'true' : 'false');
-        this.element.setAttribute(
-            'title',
-            darkModeActive ? 'Basculer vers le theme clair' : 'Basculer vers le theme sombre',
-        );
+        this.element.setAttribute('title', `Activer le theme ${nextThemeLabel}`);
+        this.element.setAttribute('aria-label', `Activer le theme ${nextThemeLabel}`);
     }
 }

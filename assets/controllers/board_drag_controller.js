@@ -21,11 +21,9 @@ export default class extends Controller {
         this.edgeTimer = null;
         this.lastEdgeSide = null;
 
-        this.boundMoveNextColumn = (event) => this.moveTaskToNextColumn(event);
         this.boundColumnChanged = (event) => this.onColumnChanged(event);
         this.boundDocumentTouchMove = (event) => this.onDocumentTouchMove(event);
 
-        this.element.addEventListener('board:move-next-column', this.boundMoveNextColumn);
         this.element.addEventListener('board:column-changed', this.boundColumnChanged);
 
         this.listTargets.forEach((list) => {
@@ -44,7 +42,6 @@ export default class extends Controller {
     }
 
     disconnect() {
-        this.element.removeEventListener('board:move-next-column', this.boundMoveNextColumn);
         this.element.removeEventListener('board:column-changed', this.boundColumnChanged);
         document.removeEventListener('touchmove', this.boundDocumentTouchMove);
         this.clearEdgeTimer();
@@ -56,6 +53,7 @@ export default class extends Controller {
         this.dragging = true;
         this.draggingItem = event.item ?? null;
         this.lastTouch = null;
+        this.element.dispatchEvent(new CustomEvent('board:drag-start', { bubbles: true }));
         if (this.isMobile()) {
             document.addEventListener('touchmove', this.boundDocumentTouchMove, { passive: true });
         }
@@ -67,6 +65,7 @@ export default class extends Controller {
         this.lastTouch = null;
         document.removeEventListener('touchmove', this.boundDocumentTouchMove);
         this.clearEdgeTimer();
+        this.element.dispatchEvent(new CustomEvent('board:drag-end', { bubbles: true }));
         return this.persistMove(event);
     }
 
@@ -168,9 +167,26 @@ export default class extends Controller {
         return window.matchMedia('(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)').matches;
     }
 
-    async moveTaskToNextColumn(event) {
-        const taskId = Number.parseInt(event.detail?.taskId ?? '', 10);
+    async moveTaskToPreviousColumn(event) {
+        const taskId = Number.parseInt(event.currentTarget?.dataset?.taskId ?? '', 10);
         if (Number.isNaN(taskId)) {
+            return;
+        }
+
+        await this.moveTaskByDirection(taskId, -1);
+    }
+
+    async moveTaskToNextColumn(event) {
+        const taskId = Number.parseInt(event.currentTarget?.dataset?.taskId ?? '', 10);
+        if (Number.isNaN(taskId)) {
+            return;
+        }
+
+        await this.moveTaskByDirection(taskId, 1);
+    }
+
+    async moveTaskByDirection(taskId, direction) {
+        if (direction !== -1 && direction !== 1) {
             return;
         }
 
@@ -181,7 +197,7 @@ export default class extends Controller {
         }
 
         const sourceIndex = this.listTargets.findIndex((list) => list === sourceList);
-        const targetList = this.listTargets[sourceIndex + 1];
+        const targetList = this.listTargets[sourceIndex + direction];
 
         if (!(targetList instanceof HTMLElement)) {
             return;
@@ -189,11 +205,25 @@ export default class extends Controller {
 
         targetList.appendChild(taskElement);
 
+        const newIndex = targetList.children.length - 1;
+
         await this.persistMove({
             item: taskElement,
             to: targetList,
-            newIndex: targetList.children.length - 1,
+            newIndex,
         });
+
+        const targetColumnId = Number.parseInt(targetList.dataset.columnId, 10);
+        if (!Number.isNaN(targetColumnId)) {
+            this.element.dispatchEvent(new CustomEvent('board:task-moved-by-button', {
+                bubbles: true,
+                detail: {
+                    taskId,
+                    targetColumnId,
+                    direction,
+                },
+            }));
+        }
     }
 
     async persistMove(event) {

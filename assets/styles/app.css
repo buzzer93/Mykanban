@@ -215,6 +215,9 @@
 		gap: 0;
 		padding-bottom: 0;
 		overflow: hidden;
+		width: 100%;
+		min-height: 1px;
+		touch-action: pan-y;
 		will-change: transform;
 		transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
@@ -242,6 +245,7 @@
 		flex: 0 0 100%;
 		width: 100%;
 		min-width: 100%;
+		min-height: 1px;
 	}
 
 	.board-column-header {
@@ -366,5 +370,29 @@
 	.board-mobile-nav-btn:disabled {
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+
+	.board-mobile-task-actions {
+		display: none;
+	}
+
+	.board-mobile-mode .board-mobile-task-actions {
+		@apply inline-flex items-center gap-1;
+	}
+
+	.board-mobile-task-move {
+		@apply inline-flex items-center justify-center text-xs font-semibold leading-none transition-colors;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 9999px;
+		border: 1px solid var(--kraken-border);
+		background: var(--kraken-white);
+		color: var(--kraken-black);
+	}
+
+	.board-mobile-task-move:hover {
+		background: var(--kraken-purple-subtle);
+		border-color: var(--kraken-purple);
+		color: var(--kraken-purple);
 	}
 }

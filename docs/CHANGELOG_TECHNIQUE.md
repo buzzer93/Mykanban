@@ -17,6 +17,21 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Ajustement UX mobile: swipe colonnes + boutons deplacement taches
+
+- Type: fix + feat
+- Quoi:
+  - Swipe horizontal retabli pour changer de colonne sur mobile, avec capture du geste sur toute la zone board (y compris quand la colonne active est vide).
+  - Ajout de boutons `←` / `→` sur chaque carte (mobile uniquement) pour deplacer une tache vers la colonne precedente/suivante sans drag.
+  - Suppression du texte d'aide superflu au-dessus des colonnes.
+  - Badge urgence standard retire des cartes; un badge `Urgent` est affiche uniquement pour `autoUrgencyLevel` 4 ou 5.
+  - Ajout d'un controller Stimulus `flash-dismiss`: fermeture manuelle et auto-disparition des messages flash apres 4 secondes.
+  - Simplification du bouton theme (version compacte, labels accessibilite geres dynamiquement).
+- Pourquoi: corriger la regression mobile, rendre la navigation et le deplacement de tache plus intuitifs, et reduire le bruit visuel.
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/controllers/board_drag_controller.js`, `assets/controllers/flash_dismiss_controller.js`, `assets/controllers/theme_controller.js`, `assets/stimulus_bootstrap.js`, `assets/styles/app.css`, `templates/board/index.html.twig`, `templates/base.html.twig`, `templates/_app_header.html.twig`, `README.md`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Refonte UX mobile du board (drag instantane + boutons de nav)
 
 - Type: feat + refactor
