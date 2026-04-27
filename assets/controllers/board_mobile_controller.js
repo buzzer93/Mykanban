@@ -1,8 +1,8 @@
 import { Controller } from '@hotwired/stimulus';
 
 const MOBILE_MEDIA_QUERY = '(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)';
-const MIN_SWIPE_PX = 72;
-const MIN_SWIPE_RATIO = 0.28;
+const MIN_SWIPE_PX = 120;
+const MIN_SWIPE_RATIO = 0.4;
 
 export default class extends Controller {
     static targets = ['column', 'track'];
@@ -93,7 +93,6 @@ export default class extends Controller {
         this.touchInteraction = {
             startX: event.touches[0].clientX,
             startIndex: this.activeIndex,
-            startScrollLeft: this.trackTarget.scrollLeft,
         };
 
         this.trackTarget.classList.add('board-mobile-no-snap');
@@ -108,7 +107,6 @@ export default class extends Controller {
         const changedTouch = event.changedTouches?.[0];
         const endX = changedTouch ? changedTouch.clientX : this.touchInteraction.startX;
         const deltaX = this.touchInteraction.startX - endX;
-        const scrollDelta = this.trackTarget.scrollLeft - this.touchInteraction.startScrollLeft;
         const viewportWidth = Math.max(this.trackTarget.clientWidth, 1);
         const threshold = Math.max(MIN_SWIPE_PX, Math.round(viewportWidth * MIN_SWIPE_RATIO));
 
@@ -116,8 +114,6 @@ export default class extends Controller {
 
         if (Math.abs(deltaX) >= threshold) {
             nextIndex += deltaX > 0 ? 1 : -1;
-        } else if (Math.abs(scrollDelta) >= threshold) {
-            nextIndex += scrollDelta > 0 ? 1 : -1;
         }
 
         this.trackTarget.classList.remove('board-mobile-no-snap');
