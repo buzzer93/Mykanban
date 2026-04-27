@@ -17,6 +17,18 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Refactor swipe mobile: passage en scroll natif + scroll-snap
+
+- Type: refactor + fix
+- Quoi:
+  - Suppression de la detection manuelle du swipe en JS dans `board_mobile_controller`.
+  - Passage a une navigation de colonnes mobile native via `overflow-x` + `scroll-snap`.
+  - Suivi de l'index actif aligne sur la position de scroll reelle.
+- Pourquoi: eliminer les regressions "swipe detecte mais colonne non affichee" et simplifier fortement la logique mobile.
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Refactor de nettoyage apres cycle de debug mobile
 
 - Type: refactor
