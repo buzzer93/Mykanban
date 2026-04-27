@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
-const SWIPE_THRESHOLD_PX = 45;
+const SWIPE_THRESHOLD_PX = 30;
 const SWIPE_DIRECTION_RATIO = 1.15;
 
 export default class extends Controller {
@@ -133,10 +133,16 @@ export default class extends Controller {
         }
     }
 
-    onTouchEnd() {
+    onTouchEnd(event) {
         if (!this.touchSession || this.dragging) {
             this.touchSession = null;
             return;
+        }
+
+        const changedTouch = event.changedTouches?.[0];
+        if (changedTouch) {
+            this.touchSession.currentX = changedTouch.clientX;
+            this.touchSession.currentY = changedTouch.clientY;
         }
 
         const deltaX = this.touchSession.currentX - this.touchSession.startX;
