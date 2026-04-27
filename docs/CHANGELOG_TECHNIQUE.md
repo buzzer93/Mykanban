@@ -17,6 +17,17 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Fix swipe mobile "en 2 temps" / colonne non affichee
+
+- Type: fix
+- Quoi:
+  - Correction du calcul de translation de la track mobile: passage d'un deplacement en pourcentage (`-N * 100%`) a un deplacement en pixels base sur la largeur reelle d'une colonne.
+  - Le slide de colonne suit maintenant exactement le viewport mobile, sans effet de decalage ni colonne invisible apres swipe.
+- Pourquoi: sur une track flex multi-colonnes, les `%` de `transform` sont relatifs a la largeur totale de la track, pas a une colonne, ce qui provoquait le comportement "swipe en 2 temps" et des colonnes non affichees.
+- Impact: `assets/controllers/board_mobile_controller.js`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Stabilisation mobile: swipe colonnes + boutons tasks, drag tactile desactive
 
 - Type: fix

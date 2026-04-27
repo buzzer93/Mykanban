@@ -1,69 +1,36 @@
 import { Controller } from '@hotwired/stimulus';
 
 const SWIPE_THRESHOLD_PX = 30;
-const SWIPE_DIRECTION_RATIO = 1.15;
+const SWIPE_DIRECTION_RATIO = 1.05;
+const MOBILE_MEDIA_QUERY = '(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)';
 
 export default class extends Controller {
     static targets = ['column', 'track'];
 
     connect() {
         this.activeIndex = 0;
-        this.dragging = false;
         this.touchSession = null;
 
-        this.boundColumnAdvance = (event) => this.onColumnAdvance(event);
         this.boundResize = () => this.applyLayout();
         this.boundTouchStart = (event) => this.onTouchStart(event);
         this.boundTouchMove = (event) => this.onTouchMove(event);
         this.boundTouchEnd = (event) => this.onTouchEnd(event);
-        this.boundDragStart = () => {
-            this.dragging = true;
-            this.touchSession = null;
-        };
-        this.boundDragEnd = () => {
-            this.dragging = false;
-            this.touchSession = null;
-        };
 
-        this.element.addEventListener('board:column-advance', this.boundColumnAdvance);
-        this.element.addEventListener('board:drag-start', this.boundDragStart);
-        this.element.addEventListener('board:drag-end', this.boundDragEnd);
         this.element.addEventListener('touchstart', this.boundTouchStart, { passive: true });
         this.element.addEventListener('touchmove', this.boundTouchMove, { passive: false });
         this.element.addEventListener('touchend', this.boundTouchEnd, { passive: true });
         window.addEventListener('resize', this.boundResize);
 
+        this.activeIndex = this.findInitialIndex();
+
         this.applyLayout({ animate: false });
     }
 
     disconnect() {
-        this.element.removeEventListener('board:column-advance', this.boundColumnAdvance);
-        this.element.removeEventListener('board:drag-start', this.boundDragStart);
-        this.element.removeEventListener('board:drag-end', this.boundDragEnd);
         this.element.removeEventListener('touchstart', this.boundTouchStart);
         this.element.removeEventListener('touchmove', this.boundTouchMove);
         this.element.removeEventListener('touchend', this.boundTouchEnd);
         window.removeEventListener('resize', this.boundResize);
-    }
-
-    previous() {
-        this.goTo(this.activeIndex - 1);
-    }
-
-    next() {
-        this.goTo(this.activeIndex + 1);
-    }
-
-    onColumnAdvance(event) {
-        if (!this.isMobile()) {
-            return;
-        }
-        const direction = event.detail?.direction;
-        if (direction === 'next') {
-            this.next();
-        } else if (direction === 'prev') {
-            this.previous();
-        }
     }
 
     goTo(index) {
@@ -73,15 +40,10 @@ export default class extends Controller {
         }
         this.activeIndex = bounded;
         this.applyLayout({ animate: true });
-
-        this.element.dispatchEvent(new CustomEvent('board:column-changed', {
-            bubbles: true,
-            detail: { index: bounded },
-        }));
     }
 
     onTouchStart(event) {
-        if (!this.isMobile() || this.dragging || event.touches.length !== 1) {
+        if (!this.isMobile() || event.touches.length !== 1) {
             this.touchSession = null;
             return;
         }
@@ -93,7 +55,7 @@ export default class extends Controller {
         }
 
         // Ignore native interactive controls so tap/click keeps working as expected.
-        if (touchTarget.closest('a, button, input, textarea, select, label, form')) {
+        if (touchTarget.closest('a, button, input, textarea, select')) {
             this.touchSession = null;
             return;
         }
@@ -109,7 +71,7 @@ export default class extends Controller {
     }
 
     onTouchMove(event) {
-        if (!this.touchSession || this.dragging || event.touches.length !== 1) {
+        if (!this.touchSession || event.touches.length !== 1) {
             return;
         }
 
@@ -134,7 +96,7 @@ export default class extends Controller {
     }
 
     onTouchEnd(event) {
-        if (!this.touchSession || this.dragging) {
+        if (!this.touchSession) {
             this.touchSession = null;
             return;
         }
@@ -152,13 +114,26 @@ export default class extends Controller {
 
         if (absX >= SWIPE_THRESHOLD_PX && absX > absY * SWIPE_DIRECTION_RATIO) {
             if (deltaX < 0) {
-                this.next();
+                this.goTo(this.activeIndex + 1);
             } else {
-                this.previous();
+                this.goTo(this.activeIndex - 1);
             }
         }
 
         this.touchSession = null;
+    }
+
+    findInitialIndex() {
+        if (!this.isMobile()) {
+            return 0;
+        }
+
+        const firstNonEmptyIndex = this.columnTargets.findIndex((column) => column.querySelector('[data-task-id]'));
+        if (firstNonEmptyIndex >= 0) {
+            return firstNonEmptyIndex;
+        }
+
+        return 0;
     }
 
     applyLayout(options = {}) {
@@ -171,7 +146,7 @@ export default class extends Controller {
 
         if (this.hasTrackTarget) {
             if (mobile) {
-                const translation = `translate3d(-${this.activeIndex * 100}%, 0, 0)`;
+                const translation = `translate3d(-${this.getOffsetPx()}px, 0, 0)`;
                 if (!animate) {
                     this.trackTarget.classList.add('board-mobile-no-transition');
                     this.trackTarget.style.transform = translation;
@@ -185,10 +160,19 @@ export default class extends Controller {
                 this.trackTarget.style.transform = '';
             }
         }
+    }
 
+    getOffsetPx() {
+        if (this.columnTargets.length === 0) {
+            return 0;
+        }
+
+        const firstColumn = this.columnTargets[0];
+        const columnWidth = Math.max(firstColumn.getBoundingClientRect().width, 1);
+        return this.activeIndex * columnWidth;
     }
 
     isMobile() {
-        return window.matchMedia('(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)').matches;
+        return window.matchMedia(MOBILE_MEDIA_QUERY).matches;
     }
 }
