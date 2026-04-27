@@ -24,6 +24,7 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
   - Abandon de la logique mixte scroll natif + snap + verrou post-geste.
   - Passage a un mode deterministe: detection du geste tactile dans `board_mobile_controller`, validation par seuil, puis rendu via `transform: translate3d(...)` de la track.
   - Garantie explicite: un geste peut deplacer au maximum d'une colonne (`startIndex ± 1`), sans saut supplementaire lie a l'inertie.
+  - Tuning supplementaire anti double-trigger: seuil releve (`140px` ou `45%` viewport) + cooldown court (`260ms`) apres swipe valide.
   - Nettoyage CSS associe: suppression des regles `scroll-snap`/scroll natif mobile devenues obsoletes.
 - Pourquoi: eliminer les sauts de colonnes persistants sur mobile reel, y compris sur gestes courts, et stabiliser une logique simple a raisonner.
 - Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.

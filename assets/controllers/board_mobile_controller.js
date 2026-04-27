@@ -1,9 +1,10 @@
 import { Controller } from '@hotwired/stimulus';
 
 const MOBILE_MEDIA_QUERY = '(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)';
-const MIN_SWIPE_PX = 96;
-const MIN_SWIPE_RATIO = 0.25;
+const MIN_SWIPE_PX = 140;
+const MIN_SWIPE_RATIO = 0.45;
 const HORIZONTAL_RATIO = 1.2;
+const SWIPE_COOLDOWN_MS = 260;
 
 export default class extends Controller {
     static targets = ['column', 'track'];
@@ -11,6 +12,7 @@ export default class extends Controller {
     connect() {
         this.activeIndex = 0;
         this.touchSession = null;
+        this.nextSwipeAllowedAt = 0;
         this.boundResize = () => this.applyLayout();
         this.boundTouchStart = (event) => this.onTouchStart(event);
         this.boundTouchMove = (event) => this.onTouchMove(event);
@@ -71,6 +73,11 @@ export default class extends Controller {
 
     onTouchStart(event) {
         if (!this.isMobile() || !this.hasTrackTarget || event.touches.length !== 1) {
+            this.touchSession = null;
+            return;
+        }
+
+        if (Date.now() < this.nextSwipeAllowedAt) {
             this.touchSession = null;
             return;
         }
@@ -139,7 +146,11 @@ export default class extends Controller {
             nextIndex += deltaX > 0 ? 1 : -1;
         }
 
+        const changedIndex = nextIndex !== this.touchSession.startIndex;
         this.goTo(nextIndex);
+        if (changedIndex) {
+            this.nextSwipeAllowedAt = Date.now() + SWIPE_COOLDOWN_MS;
+        }
         this.touchSession = null;
     }
 
