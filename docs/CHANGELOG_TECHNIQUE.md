@@ -24,6 +24,7 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
   - Suppression de la detection manuelle du swipe en JS dans `board_mobile_controller`.
   - Passage a une navigation de colonnes mobile native via `overflow-x` + `scroll-snap`.
   - Suivi de l'index actif aligne sur la position de scroll reelle.
+  - Reglage de sensibilite: `scroll-snap-type` passe de `mandatory` a `proximity` pour limiter les changements de colonne accidentels.
 - Pourquoi: eliminer les regressions "swipe detecte mais colonne non affichee" et simplifier fortement la logique mobile.
 - Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
 
