@@ -17,6 +17,18 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Refactor de nettoyage apres cycle de debug mobile
+
+- Type: refactor
+- Quoi:
+  - Simplification de `board_mobile_controller.js`: suppression des ecoutes/evenements devenus inutiles et recentrage sur la navigation swipe + translation de track.
+  - Simplification de `board_drag_controller.js`: suppression du legacy drag-to-edge et des mecanismes inter-controllers obsoletes, conservation de Sortable desktop + deplacement par boutons de carte.
+  - Nettoyage template board: retrait d'un target Stimulus inutilise (`data-board-mobile-target="task"`).
+- Pourquoi: reduire le code de rafistolage accumule pendant le debug, rendre les responsabilites explicites et faciliter la maintenance.
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/controllers/board_drag_controller.js`, `templates/board/index.html.twig`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Fix swipe mobile "en 2 temps" / colonne non affichee
 
 - Type: fix
