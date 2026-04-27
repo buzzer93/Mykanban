@@ -225,6 +225,7 @@ Theme:
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
 - en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, navigation horizontale native via `overflow-x` + `scroll-snap`, avec validation du changement de colonne par seuil de swipe strict (distance minimale du doigt, independante de l'inertie de scroll) pour eviter les bascules accidentelles, recentrage immediat en fin de geste (sans lissage) pour eviter l'effet "swipe en deux temps", et verrou court post-geste qui limite explicitement le swipe a une seule colonne par interaction; boutons `←` / `→` sur chaque carte pour changer de colonne sans drag tactile
+- au demarrage d'un swipe, l'index de depart est ancre sur la position reelle de scroll de la track (et non sur un etat interne potentiel), afin d'eviter les sauts de colonne quand la track est entre deux positions
 - SortableJS est reserve au desktop ; en mobile tactile, le double tap est retire, le swipe gere la navigation des colonnes, et les boutons `←` / `→` rendent le changement de colonne des taches explicite
 - Les controllers front ont ete simplifies pour ce mode: `board_mobile_controller` pilote le layout mobile et l'index actif base sur le scroll natif; `board_drag_controller` pilote uniquement Sortable desktop et les deplacements explicites par boutons de carte
 

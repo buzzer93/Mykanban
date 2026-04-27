@@ -41,6 +41,7 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
   - Reglage durci: changement de colonne valide uniquement sur le deplacement du doigt (sans tenir compte de l'inertie du scroll) avec seuil releve (`120px` ou `40%` du viewport).
   - Correction UX: suppression du recentrage lisse apres swipe (retour en recentrage immediat) pour eliminer l'impression de "swipe en deux temps".
   - Verrou post-geste: limitation explicite a un seul changement de colonne par swipe pour empecher les sauts de 2 colonnes en cas d'inertie forte.
+  - Correctif anti-skip: index de depart du geste ancre sur la position reelle de scroll au `touchstart` (puis normalisation immediate), pour eviter les sauts quand la track est entre deux colonnes.
 - Pourquoi: eliminer les regressions "swipe detecte mais colonne non affichee" et simplifier fortement la logique mobile.
 - Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
 

@@ -99,9 +99,12 @@ export default class extends Controller {
             return;
         }
 
+        const startIndex = this.getCurrentScrollIndex();
+        this.scrollToIndex(startIndex, false);
+
         this.touchInteraction = {
             startX: event.touches[0].clientX,
-            startIndex: this.activeIndex,
+            startIndex,
         };
 
         this.trackTarget.classList.add('board-mobile-no-snap');
@@ -169,6 +172,16 @@ export default class extends Controller {
         const left = targetColumn.offsetLeft;
         this.trackTarget.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' });
         this.activeIndex = bounded;
+    }
+
+    getCurrentScrollIndex() {
+        if (!this.hasTrackTarget || this.columnTargets.length === 0) {
+            return 0;
+        }
+
+        const viewportWidth = Math.max(this.trackTarget.clientWidth, 1);
+        const index = Math.round(this.trackTarget.scrollLeft / viewportWidth);
+        return Math.max(0, Math.min(index, this.columnTargets.length - 1));
     }
 
     isMobile() {
