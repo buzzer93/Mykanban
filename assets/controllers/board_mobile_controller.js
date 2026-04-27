@@ -3,6 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 const MOBILE_MEDIA_QUERY = '(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)';
 const MIN_SWIPE_PX = 120;
 const MIN_SWIPE_RATIO = 0.4;
+const POST_SWIPE_LOCK_MS = 180;
 
 export default class extends Controller {
     static targets = ['column', 'track'];
@@ -10,6 +11,8 @@ export default class extends Controller {
     connect() {
         this.activeIndex = 0;
         this.touchInteraction = null;
+        this.swipeLockIndex = null;
+        this.swipeLockTimer = null;
         this.boundResize = () => this.applyLayout();
         this.boundTrackScroll = () => this.onTrackScroll();
         this.boundTrackTouchStart = (event) => this.onTrackTouchStart(event);
@@ -30,6 +33,7 @@ export default class extends Controller {
     }
 
     disconnect() {
+        this.clearSwipeLock();
         window.removeEventListener('resize', this.boundResize);
         if (this.hasTrackTarget) {
             this.trackTarget.removeEventListener('scroll', this.boundTrackScroll);
@@ -70,6 +74,11 @@ export default class extends Controller {
 
     onTrackScroll() {
         if (!this.isMobile() || this.columnTargets.length === 0 || !this.hasTrackTarget || this.touchInteraction) {
+            return;
+        }
+
+        if (this.swipeLockIndex !== null) {
+            this.scrollToIndex(this.swipeLockIndex, false);
             return;
         }
 
@@ -118,6 +127,7 @@ export default class extends Controller {
 
         this.trackTarget.classList.remove('board-mobile-no-snap');
         this.scrollToIndex(nextIndex, false);
+        this.lockSwipeToIndex(nextIndex);
         this.touchInteraction = null;
     }
 
@@ -129,7 +139,24 @@ export default class extends Controller {
 
         this.trackTarget.classList.remove('board-mobile-no-snap');
         this.scrollToIndex(this.activeIndex, false);
+        this.lockSwipeToIndex(this.activeIndex);
         this.touchInteraction = null;
+    }
+
+    lockSwipeToIndex(index) {
+        this.clearSwipeLock();
+        this.swipeLockIndex = Math.max(0, Math.min(index, this.columnTargets.length - 1));
+        this.swipeLockTimer = window.setTimeout(() => {
+            this.clearSwipeLock();
+        }, POST_SWIPE_LOCK_MS);
+    }
+
+    clearSwipeLock() {
+        if (this.swipeLockTimer !== null) {
+            window.clearTimeout(this.swipeLockTimer);
+            this.swipeLockTimer = null;
+        }
+        this.swipeLockIndex = null;
     }
 
     scrollToIndex(index, smooth = false) {
