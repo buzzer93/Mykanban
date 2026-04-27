@@ -214,27 +214,12 @@
 		flex-wrap: nowrap;
 		gap: 0;
 		padding-bottom: 0;
-		overflow-x: auto;
-		overflow-y: hidden;
+		overflow: hidden;
 		width: 100%;
 		min-height: 1px;
-		scroll-snap-type: x proximity;
-		-webkit-overflow-scrolling: touch;
-		scroll-behavior: smooth;
-		touch-action: pan-x;
-	}
-
-	.board-mobile-mode .board-columns.board-mobile-no-snap {
-		scroll-snap-type: none;
-		scroll-behavior: auto;
-	}
-
-	.board-mobile-mode .board-columns::-webkit-scrollbar {
-		display: none;
-	}
-
-	.board-mobile-mode .board-columns {
-		scrollbar-width: none;
+		touch-action: pan-y;
+		will-change: transform;
+		transition: transform 220ms ease-out;
 	}
 
 	.board-column {
@@ -253,7 +238,6 @@
 		width: 100%;
 		min-width: 100%;
 		min-height: 1px;
-		scroll-snap-align: start;
 	}
 
 	.board-column-header {
