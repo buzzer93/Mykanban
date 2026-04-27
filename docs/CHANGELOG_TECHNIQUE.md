@@ -17,6 +17,21 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Fiabilisation des gestes mobiles du board
+
+- Type: fix + feat
+- Quoi:
+  - SortableJS configure avec `delay: 250ms`, `delayOnTouchOnly: true`, `touchStartThreshold: 5` pour que le drag d'une carte mobile demande un long-press, et n'absorbe plus les gestes de swipe horizontal et de double tap.
+  - Swipe entre colonnes: `touchmove` passe en `passive: false` avec `preventDefault` quand le geste est horizontal, ce qui empeche le scroll vertical de la page de capter le geste.
+  - Double tap fiabilise: detection deplacee de `click` vers `touchend` (un `click` n'est pas emis si le doigt bouge, ou peut etre annule par SortableJS).
+  - Drag-to-edge: pendant un drag SortableJS sur mobile, maintenir le doigt 400 ms dans les 60 px du bord gauche/droit fait defiler la colonne visible (event `board:column-advance`).
+  - Breakpoint mobile etendu: en plus de `max-width: 1023px`, le mode mobile s'active aussi sur `(pointer: coarse) and (max-width: 1279px)` pour couvrir les tablettes tactiles.
+  - Classe `board-mobile-mode` posee en JS sur la section du board, utilisee comme filet de securite CSS pour forcer le mode mono-colonne meme si les media queries ne matchent pas.
+- Pourquoi: la version precedente (commit `03f3590`) n'etait pas operationnelle: SortableJS volait tous les touchs, le swipe etait converti en drag involontaire, le double tap n'etait pas dispatche, et les tablettes voyaient le scroll horizontal desktop.
+- Impact: `assets/controllers/board_drag_controller.js`, `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-26 — Board mobile en navigation mono-colonne
 
 - Type: feat

@@ -2,6 +2,9 @@ import { Controller } from '@hotwired/stimulus';
 import Sortable from 'sortablejs';
 import { generateCsrfHeaders, generateCsrfToken, removeCsrfToken } from './csrf_protection_controller.js';
 
+const EDGE_ZONE_PX = 60;
+const EDGE_HOLD_MS = 400;
+
 export default class extends Controller {
     static targets = ['list'];
 
@@ -12,7 +15,12 @@ export default class extends Controller {
 
     connect() {
         this.sortables = [];
+        this.dragging = false;
+        this.edgeTimer = null;
+        this.lastEdgeSide = null;
+
         this.boundMoveNextColumn = (event) => this.moveTaskToNextColumn(event);
+        this.boundDocumentTouchMove = (event) => this.onDocumentTouchMove(event);
         this.element.addEventListener('board:move-next-column', this.boundMoveNextColumn);
 
         this.listTargets.forEach((list) => {
@@ -22,7 +30,11 @@ export default class extends Controller {
                 scroll: false,
                 filter: 'a, button, input, textarea, select, label',
                 preventOnFilter: false,
-                onEnd: (event) => this.persistMove(event),
+                delay: 250,
+                delayOnTouchOnly: true,
+                touchStartThreshold: 5,
+                onStart: () => this.onDragStart(),
+                onEnd: (event) => this.onDragEnd(event),
             });
 
             this.sortables.push(sortable);
@@ -31,8 +43,77 @@ export default class extends Controller {
 
     disconnect() {
         this.element.removeEventListener('board:move-next-column', this.boundMoveNextColumn);
+        document.removeEventListener('touchmove', this.boundDocumentTouchMove);
+        this.clearEdgeTimer();
         this.sortables.forEach((sortable) => sortable.destroy());
         this.sortables = [];
+    }
+
+    onDragStart() {
+        this.dragging = true;
+        if (this.isMobile()) {
+            document.addEventListener('touchmove', this.boundDocumentTouchMove, { passive: true });
+        }
+    }
+
+    onDragEnd(event) {
+        this.dragging = false;
+        document.removeEventListener('touchmove', this.boundDocumentTouchMove);
+        this.clearEdgeTimer();
+        return this.persistMove(event);
+    }
+
+    onDocumentTouchMove(event) {
+        if (!this.dragging) {
+            return;
+        }
+
+        const touch = event.changedTouches[0] ?? event.touches[0];
+        if (!touch) {
+            return;
+        }
+
+        const x = touch.clientX;
+        const width = window.innerWidth;
+
+        let side = null;
+        if (x <= EDGE_ZONE_PX) {
+            side = 'prev';
+        } else if (x >= width - EDGE_ZONE_PX) {
+            side = 'next';
+        }
+
+        if (side === null) {
+            this.clearEdgeTimer();
+            return;
+        }
+
+        if (this.lastEdgeSide === side && this.edgeTimer !== null) {
+            return;
+        }
+
+        this.clearEdgeTimer();
+        this.lastEdgeSide = side;
+        this.edgeTimer = window.setTimeout(() => {
+            this.element.dispatchEvent(new CustomEvent('board:column-advance', {
+                bubbles: true,
+                detail: { direction: side },
+            }));
+            this.edgeTimer = null;
+            this.lastEdgeSide = null;
+        }, EDGE_HOLD_MS);
+    }
+
+    clearEdgeTimer() {
+        if (this.edgeTimer !== null) {
+            clearTimeout(this.edgeTimer);
+            this.edgeTimer = null;
+        }
+        this.lastEdgeSide = null;
+    }
+
+    isMobile() {
+        return window.matchMedia('(max-width: 1023px), (pointer: coarse) and (max-width: 1279px)').matches;
     }
 
     async moveTaskToNextColumn(event) {

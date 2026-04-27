@@ -1,6 +1,10 @@
 grumphp:
   # Stoppe immédiatement si une tâche échoue
   stop_on_failure: true
+
+  # Timeout (en secondes) appliqué à chaque tâche externe (phpunit, phpstan, etc.).
+  # 60s par défaut était trop court pour la suite PHPUnit (boot Symfony + tests fonctionnels).
+  process_timeout: 180
   
   # Configuration pour l’auto-fix (php-cs-fixer)
   fixer:

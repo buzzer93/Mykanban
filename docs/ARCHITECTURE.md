@@ -224,7 +224,8 @@ Theme:
 - board avec composants dedies (`board-toolbar`, `board-column`, `board-task-card`) pour une densite de barre d'outils plus forte et une hierarchie typographique plus nette des cartes
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
-- en mobile (`< 1024px`): une seule colonne visible a la fois, navigation par swipe horizontal entre colonnes, avec fallback double tap sur une carte pour deplacer la tache vers la colonne suivante
+- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, navigation par swipe horizontal entre colonnes (touchmove `passive: false` + `preventDefault` quand le geste est horizontal), double tap sur une carte detecte sur `touchend` pour envoyer la tache vers la colonne de droite, et drag-to-edge pendant un drag SortableJS (maintenir le doigt 400 ms dans les 60 px du bord gauche/droit pour faire defiler la colonne visible)
+- SortableJS configure avec `delay: 250 ms`, `delayOnTouchOnly: true`, `touchStartThreshold: 5` pour que le drag d'une carte mobile demande un long-press et n'absorbe plus les gestes de swipe / tap
 
 ## 6. Commandes CLI
 
@@ -367,3 +368,4 @@ Derniere mise a jour structurelle:
 - 2026-04-24: ajout de GrumPHP (config de base + execution locale des checks qualite).
 - 2026-04-26: ajout de php-parallel-lint pour corriger l'execution de la tache phplint en pre-commit.
 - 2026-04-26: ajout d'une navigation mobile mono-colonne du board (swipe horizontal + fallback double tap vers la colonne de droite).
+- 2026-04-27: fiabilisation des gestes mobiles du board (SortableJS `delay: 250ms`, swipe `touchmove` en `passive: false`, double tap detecte sur `touchend`, drag-to-edge pendant un drag, breakpoint mobile etendu aux tablettes tactiles via `(pointer: coarse)`, classe `board-mobile-mode` pilotee en JS pour decoupler le mode mobile des seules media queries).
