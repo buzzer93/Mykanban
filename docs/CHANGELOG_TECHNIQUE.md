@@ -17,6 +17,18 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Stabilisation mobile: swipe colonnes + boutons tasks, drag tactile desactive
+
+- Type: fix
+- Quoi:
+  - Desactivation du drag tactile SortableJS sur mobile pour eliminer les conflits de gestes.
+  - Navigation des colonnes maintenue uniquement par swipe horizontal.
+  - Deplacement de taches maintenu via boutons `←` / `→` sur les cartes.
+- Pourquoi: corriger les regressions (colonnes inaccessibles, taches deplacees involontairement) causees par la concurrence entre drag tactile et swipe.
+- Impact: `assets/controllers/board_drag_controller.js`, `README.md`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Navigation colonnes mobile en swipe uniquement
 
 - Type: fix

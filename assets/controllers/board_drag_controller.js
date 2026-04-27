@@ -20,12 +20,44 @@ export default class extends Controller {
         this.lastTouch = null;
         this.edgeTimer = null;
         this.lastEdgeSide = null;
+        this.mobileDragDisabled = false;
 
         this.boundColumnChanged = (event) => this.onColumnChanged(event);
         this.boundDocumentTouchMove = (event) => this.onDocumentTouchMove(event);
+        this.boundResize = () => this.syncSortableMode();
 
         this.element.addEventListener('board:column-changed', this.boundColumnChanged);
+        window.addEventListener('resize', this.boundResize);
 
+        this.syncSortableMode();
+    }
+
+    disconnect() {
+        this.element.removeEventListener('board:column-changed', this.boundColumnChanged);
+        document.removeEventListener('touchmove', this.boundDocumentTouchMove);
+        window.removeEventListener('resize', this.boundResize);
+        this.clearEdgeTimer();
+        this.destroySortables();
+    }
+
+    syncSortableMode() {
+        const mobile = this.isMobile();
+        if (mobile && !this.mobileDragDisabled) {
+            this.mobileDragDisabled = true;
+            this.destroySortables();
+            return;
+        }
+
+        if (!mobile && this.mobileDragDisabled) {
+            this.mobileDragDisabled = false;
+        }
+
+        if (!mobile && this.sortables.length === 0) {
+            this.createSortables();
+        }
+    }
+
+    createSortables() {
         this.listTargets.forEach((list) => {
             const sortable = Sortable.create(list, {
                 group: 'kanban-tasks',
@@ -41,12 +73,14 @@ export default class extends Controller {
         });
     }
 
-    disconnect() {
-        this.element.removeEventListener('board:column-changed', this.boundColumnChanged);
-        document.removeEventListener('touchmove', this.boundDocumentTouchMove);
-        this.clearEdgeTimer();
+    destroySortables() {
         this.sortables.forEach((sortable) => sortable.destroy());
         this.sortables = [];
+        this.dragging = false;
+        this.draggingItem = null;
+        this.lastTouch = null;
+        document.removeEventListener('touchmove', this.boundDocumentTouchMove);
+        this.clearEdgeTimer();
     }
 
     onDragStart(event) {
@@ -70,7 +104,7 @@ export default class extends Controller {
     }
 
     onDocumentTouchMove(event) {
-        if (!this.dragging) {
+        if (this.mobileDragDisabled || !this.dragging) {
             return;
         }
 

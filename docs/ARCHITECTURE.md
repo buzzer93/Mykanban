@@ -224,9 +224,9 @@ Theme:
 - board avec composants dedies (`board-toolbar`, `board-column`, `board-task-card`) pour une densite de barre d'outils plus forte et une hierarchie typographique plus nette des cartes
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
-- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, montee dans une track `display: flex` translatee horizontalement via `transform: translateX(-N * 100%)`, navigation par swipe horizontal sur toute la zone board (meme quand la colonne active est vide), et boutons `←` / `→` sur chaque carte pour changer de colonne sans drag
+- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, montee dans une track `display: flex` translatee horizontalement via `transform: translateX(-N * 100%)`, navigation par swipe horizontal sur toute la zone board (meme quand la colonne active est vide), et boutons `←` / `→` sur chaque carte pour changer de colonne sans drag tactile
 - au moment d'un drag-to-edge, la carte en cours de drag est reattachee dans la liste de la nouvelle colonne visible (`appendChild`) et un evenement `mousemove` synthetique est dispatche apres l'animation pour que SortableJS recalcule le placeholder/preview sans que l'utilisateur ait a bouger le doigt
-- SortableJS reste en config par defaut sur mobile (drag instantane, sans long-press) ; le double tap est retire. Le swipe est conserve pour la navigation des colonnes, et les boutons `←` / `→` rendent le changement de colonne des taches explicite
+- SortableJS est reserve au desktop ; en mobile tactile, le double tap est retire, le swipe gere la navigation des colonnes, et les boutons `←` / `→` rendent le changement de colonne des taches explicite
 
 ## 6. Commandes CLI
 
