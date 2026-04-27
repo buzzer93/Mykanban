@@ -17,6 +17,18 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Navigation colonnes mobile en swipe uniquement
+
+- Type: fix
+- Quoi:
+  - Suppression des boutons de navigation de colonnes `‹` / `›` sur mobile.
+  - Navigation des colonnes conservee uniquement par swipe horizontal.
+  - Boutons `←` / `→` sur les cartes conserves pour deplacer les taches entre colonnes.
+- Pourquoi: aligner le comportement avec la decision UX validee (swipe pour colonnes, boutons sur les tasks).
+- Impact: `templates/board/index.html.twig`, `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `README.md`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Ajustement UX mobile: swipe colonnes + boutons deplacement taches
 
 - Type: fix + feat

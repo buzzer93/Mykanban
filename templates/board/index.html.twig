@@ -52,22 +52,6 @@
              data-controller="board-drag board-mobile"
              data-board-drag-url-value="{{ moveTasksUrl }}"
              data-board-drag-token-value="{{ moveTasksToken }}">
-        <div class="mb-3 flex items-center justify-end">
-            <div class="hidden board-mobile-nav" data-board-mobile-target="navBar">
-                <button type="button"
-                        class="board-mobile-nav-btn"
-                        data-action="board-mobile#previous"
-                        data-board-mobile-target="prevButton"
-                        aria-label="Colonne précédente">‹</button>
-                <span class="board-mobile-counter" data-board-mobile-target="counter">1/1</span>
-                <button type="button"
-                        class="board-mobile-nav-btn"
-                        data-action="board-mobile#next"
-                        data-board-mobile-target="nextButton"
-                        aria-label="Colonne suivante">›</button>
-            </div>
-        </div>
-
         <div class="board-columns" data-board-mobile-target="track">
             {% for item in kanbanColumns %}
                 {% set column = item.column %}

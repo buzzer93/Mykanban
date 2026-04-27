@@ -4,7 +4,7 @@ const SWIPE_THRESHOLD_PX = 45;
 const SWIPE_DIRECTION_RATIO = 1.15;
 
 export default class extends Controller {
-    static targets = ['column', 'counter', 'navBar', 'prevButton', 'nextButton', 'track'];
+    static targets = ['column', 'track'];
 
     connect() {
         this.activeIndex = 0;
@@ -92,8 +92,8 @@ export default class extends Controller {
             return;
         }
 
-        // Keep card interactions focused on drag/buttons. Swipe should start from the board area.
-        if (touchTarget.closest('[data-task-id]')) {
+        // Ignore native interactive controls so tap/click keeps working as expected.
+        if (touchTarget.closest('a, button, input, textarea, select, label, form')) {
             this.touchSession = null;
             return;
         }
@@ -180,19 +180,6 @@ export default class extends Controller {
             }
         }
 
-        if (this.hasCounterTarget) {
-            this.counterTarget.textContent = `${this.activeIndex + 1}/${this.columnTargets.length}`;
-        }
-
-        if (this.hasPrevButtonTarget) {
-            this.prevButtonTarget.disabled = this.activeIndex <= 0;
-        }
-        if (this.hasNextButtonTarget) {
-            this.nextButtonTarget.disabled = this.activeIndex >= this.columnTargets.length - 1;
-        }
-        if (this.hasNavBarTarget) {
-            this.navBarTarget.classList.toggle('hidden', !mobile);
-        }
     }
 
     isMobile() {
