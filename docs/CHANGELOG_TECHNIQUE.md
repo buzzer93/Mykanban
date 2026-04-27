@@ -17,6 +17,18 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Script de mise a jour VPS
+
+- Type: feat
+- Quoi:
+  - Ajout du script `scripts/update-vps.sh` pour automatiser la sequence de mise a jour serveur.
+  - Sequence executee: `git pull --ff-only`, `tailwind:build --minify`, `asset-map:compile`, `cache:clear --env=prod`.
+  - Documentation de lancement ajoutee dans le README.
+- Pourquoi: fiabiliser les mises a jour manuelles VPS et eviter les oublis de build/compile/cache.
+- Impact: `scripts/update-vps.sh`, `README.md`, `docs/ARCHITECTURE.md`.
+
+---
+
 ### 2026-04-27 — Refactor swipe mobile: passage en scroll natif + scroll-snap
 
 - Type: refactor + fix

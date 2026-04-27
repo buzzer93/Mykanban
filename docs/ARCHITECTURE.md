@@ -235,6 +235,7 @@ Theme:
 - doctrine:fixtures:load --no-interaction
 - vendor/bin/grumphp run
 - vendor/bin/parallel-lint (utilise par la tache phplint GrumPHP)
+- scripts/update-vps.sh (sequence de mise a jour serveur: git pull + tailwind + asset-map + cache clear)
 
 ## 7. Decisions techniques (ADR)
 
@@ -377,3 +378,4 @@ Derniere mise a jour structurelle:
 - 2026-04-27: refactor controllers board mobile/drag — suppression du code legacy de drag-to-edge et des evenements inter-controllers devenus inutiles, separation claire des responsabilites (swipe mobile d'un cote, drag desktop + boutons task de l'autre).
 - 2026-04-27: migration du swipe mobile vers un scroll natif `scroll-snap` (abandon du swipe detecte en JS + transform), ce qui elimine les effets "swipe detecte mais colonne non affichee" observes sur mobile reel.
 - 2026-04-27: tuning de sensibilite mobile — ajout d'un seuil explicite avant changement de colonne (distance minimale en px et ratio viewport) pour limiter les changements non intentionnels.
+- 2026-04-27: ajout d'un script serveur `scripts/update-vps.sh` pour standardiser la sequence de deploiement manuel (pull, build tailwind, compile assets, clear cache).

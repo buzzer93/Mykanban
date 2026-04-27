@@ -138,6 +138,9 @@ php bin/console debug:router | Select-String -Pattern '/api|_api|api_'
 # Cache
 php bin/console cache:clear
 
+# Update VPS (pull + tailwind + asset-map + cache clear)
+bash scripts/update-vps.sh
+
 # Sécurité
 php bin/console app:user:set-admin <username> <email> [password]   # crée/met à jour l'admin
 
@@ -147,6 +150,28 @@ php bin/console app:tasks:auto-archive
 # Tailwind CSS
 php bin/console tailwind:build                          # build one-shot (prod / CI)
 php bin/console tailwind:build --watch                  # watch en dev
+```
+
+### Mise a jour rapide VPS
+
+Depuis la racine du projet sur le VPS:
+
+```bash
+chmod +x scripts/update-vps.sh   # une seule fois
+bash scripts/update-vps.sh
+```
+
+Le script execute automatiquement:
+
+1. `git pull --ff-only`
+2. `php bin/console tailwind:build --minify`
+3. `php bin/console asset-map:compile`
+4. `php bin/console cache:clear --env=prod`
+
+Option: pour forcer un autre environnement Symfony:
+
+```bash
+APP_ENV=prod bash scripts/update-vps.sh
 ```
 
 ## Structure du projet
@@ -159,6 +184,7 @@ mykanban/
 ├── docs/                  # Documentation technique détaillée
 │   ├── ARCHITECTURE.md
 │   └── CHANGELOG_TECHNIQUE.md
+├── scripts/               # Scripts utilitaires (ex: update-vps.sh)
 ├── assets/                # Sources front (Stimulus controllers, app.js, styles/app.css Tailwind)
 ├── bin/console            # Point d'entrée CLI Symfony
 ├── config/                # Configuration Symfony
