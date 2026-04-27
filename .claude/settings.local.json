@@ -6,7 +6,9 @@
       "Bash(vendor/bin/phpstan analyse *)",
       "Bash(composer config *)",
       "Bash(composer remove *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(vendor/bin/grumphp --version)",
+      "Bash(php bin/console tailwind:build)"
     ]
   }
 }

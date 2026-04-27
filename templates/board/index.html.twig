@@ -55,12 +55,24 @@
         <div class="mb-3 flex items-center gap-2 text-xs ui-muted">
             <p>Drag & drop actif.</p>
             <p class="hidden" data-board-mobile-target="hint">
-                Swipe gauche/droite pour naviguer, double tap sur une tâche pour l'envoyer à droite.
+                Drag une carte vers le bord pour passer à la colonne d'à côté.
             </p>
-            <span class="board-mobile-counter" data-board-mobile-target="counter">1/1</span>
+            <div class="hidden ml-auto board-mobile-nav" data-board-mobile-target="navBar">
+                <button type="button"
+                        class="board-mobile-nav-btn"
+                        data-action="board-mobile#previous"
+                        data-board-mobile-target="prevButton"
+                        aria-label="Colonne précédente">‹</button>
+                <span class="board-mobile-counter" data-board-mobile-target="counter">1/1</span>
+                <button type="button"
+                        class="board-mobile-nav-btn"
+                        data-action="board-mobile#next"
+                        data-board-mobile-target="nextButton"
+                        aria-label="Colonne suivante">›</button>
+            </div>
         </div>
 
-        <div class="board-columns">
+        <div class="board-columns" data-board-mobile-target="track">
             {% for item in kanbanColumns %}
                 {% set column = item.column %}
                 {% set tasks = item.tasks %}

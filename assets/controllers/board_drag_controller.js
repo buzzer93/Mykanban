@@ -3,7 +3,7 @@ import Sortable from 'sortablejs';
 import { generateCsrfHeaders, generateCsrfToken, removeCsrfToken } from './csrf_protection_controller.js';
 
 const EDGE_ZONE_PX = 60;
-const EDGE_HOLD_MS = 400;
+const EDGE_HOLD_MS = 350;
 
 export default class extends Controller {
     static targets = ['list'];
@@ -16,12 +16,17 @@ export default class extends Controller {
     connect() {
         this.sortables = [];
         this.dragging = false;
+        this.draggingItem = null;
+        this.lastTouch = null;
         this.edgeTimer = null;
         this.lastEdgeSide = null;
 
         this.boundMoveNextColumn = (event) => this.moveTaskToNextColumn(event);
+        this.boundColumnChanged = (event) => this.onColumnChanged(event);
         this.boundDocumentTouchMove = (event) => this.onDocumentTouchMove(event);
+
         this.element.addEventListener('board:move-next-column', this.boundMoveNextColumn);
+        this.element.addEventListener('board:column-changed', this.boundColumnChanged);
 
         this.listTargets.forEach((list) => {
             const sortable = Sortable.create(list, {
@@ -30,10 +35,7 @@ export default class extends Controller {
                 scroll: false,
                 filter: 'a, button, input, textarea, select, label',
                 preventOnFilter: false,
-                delay: 250,
-                delayOnTouchOnly: true,
-                touchStartThreshold: 5,
-                onStart: () => this.onDragStart(),
+                onStart: (event) => this.onDragStart(event),
                 onEnd: (event) => this.onDragEnd(event),
             });
 
@@ -43,14 +45,17 @@ export default class extends Controller {
 
     disconnect() {
         this.element.removeEventListener('board:move-next-column', this.boundMoveNextColumn);
+        this.element.removeEventListener('board:column-changed', this.boundColumnChanged);
         document.removeEventListener('touchmove', this.boundDocumentTouchMove);
         this.clearEdgeTimer();
         this.sortables.forEach((sortable) => sortable.destroy());
         this.sortables = [];
     }
 
-    onDragStart() {
+    onDragStart(event) {
         this.dragging = true;
+        this.draggingItem = event.item ?? null;
+        this.lastTouch = null;
         if (this.isMobile()) {
             document.addEventListener('touchmove', this.boundDocumentTouchMove, { passive: true });
         }
@@ -58,6 +63,8 @@ export default class extends Controller {
 
     onDragEnd(event) {
         this.dragging = false;
+        this.draggingItem = null;
+        this.lastTouch = null;
         document.removeEventListener('touchmove', this.boundDocumentTouchMove);
         this.clearEdgeTimer();
         return this.persistMove(event);
@@ -72,6 +79,8 @@ export default class extends Controller {
         if (!touch) {
             return;
         }
+
+        this.lastTouch = { x: touch.clientX, y: touch.clientY };
 
         const x = touch.clientX;
         const width = window.innerWidth;
@@ -102,6 +111,49 @@ export default class extends Controller {
             this.edgeTimer = null;
             this.lastEdgeSide = null;
         }, EDGE_HOLD_MS);
+    }
+
+    onColumnChanged(event) {
+        if (!this.dragging || !this.draggingItem) {
+            return;
+        }
+
+        const newIndex = event.detail?.index;
+        if (typeof newIndex !== 'number') {
+            return;
+        }
+
+        const targetList = this.listTargets[newIndex];
+        if (!(targetList instanceof HTMLElement)) {
+            return;
+        }
+
+        if (this.draggingItem.parentNode !== targetList) {
+            targetList.appendChild(this.draggingItem);
+        }
+
+        // Wait for the slide animation to settle, then nudge SortableJS to re-evaluate
+        // the drop target so the placeholder/preview reappears under the finger
+        // without forcing the user to wiggle.
+        if (this.lastTouch) {
+            const { x, y } = this.lastTouch;
+            window.setTimeout(() => {
+                if (!this.dragging) {
+                    return;
+                }
+                const target = document.elementFromPoint(x, y);
+                if (!target) {
+                    return;
+                }
+                const evt = new MouseEvent('mousemove', {
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: x,
+                    clientY: y,
+                });
+                target.dispatchEvent(evt);
+            }, 270);
+        }
     }
 
     clearEdgeTimer() {

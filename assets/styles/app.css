@@ -200,13 +200,6 @@
 		padding-bottom: 0.5rem;
 	}
 
-	@media (max-width: 1023px), (pointer: coarse) and (max-width: 1279px) {
-		.board-columns {
-			overflow: hidden;
-			touch-action: pan-y;
-		}
-	}
-
 	@media (min-width: 1024px) and (pointer: fine) {
 		.board-columns {
 			display: grid;
@@ -217,21 +210,26 @@
 	}
 
 	.board-mobile-mode .board-columns {
-		overflow: hidden;
-		touch-action: pan-y;
 		display: flex;
+		flex-wrap: nowrap;
+		gap: 0;
+		padding-bottom: 0;
+		overflow: hidden;
+		will-change: transform;
+		transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+	}
+
+	.board-mobile-mode .board-columns.board-mobile-no-transition {
+		transition: none;
+	}
+
+	.board-mobile-mode .board-column {
+		transition: opacity 220ms ease-out;
 	}
 
 	.board-column {
 		@apply w-[19.5rem] shrink-0 p-3;
 		min-width: 19rem;
-	}
-
-	@media (max-width: 1023px), (pointer: coarse) and (max-width: 1279px) {
-		.board-column {
-			width: 100%;
-			min-width: 100%;
-		}
 	}
 
 	@media (min-width: 1024px) and (pointer: fine) {
@@ -241,6 +239,7 @@
 	}
 
 	.board-mobile-mode .board-column {
+		flex: 0 0 100%;
 		width: 100%;
 		min-width: 100%;
 	}
@@ -340,19 +339,32 @@
 		@apply rounded-[8px] px-2 py-[1px] text-[11px] font-semibold;
 		background: var(--kraken-purple-subtle);
 		color: var(--kraken-gray);
+		min-width: 2.25rem;
+		text-align: center;
 	}
 
-	.board-column-mobile-hidden {
-		display: none !important;
+	.board-mobile-nav {
+		@apply inline-flex items-center gap-1.5;
 	}
 
-	.board-column-mobile-active {
-		display: block;
+	.board-mobile-nav-btn {
+		@apply inline-flex items-center justify-center text-base font-semibold leading-none transition-colors;
+		width: 1.75rem;
+		height: 1.75rem;
+		border-radius: 9999px;
+		border: 1px solid var(--kraken-border);
+		background: var(--kraken-white);
+		color: var(--kraken-black);
 	}
 
-	@media (min-width: 1024px) and (pointer: fine) {
-		.board-mobile-counter {
-			display: none;
-		}
+	.board-mobile-nav-btn:hover:not(:disabled) {
+		background: var(--kraken-purple-subtle);
+		border-color: var(--kraken-purple);
+		color: var(--kraken-purple);
+	}
+
+	.board-mobile-nav-btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 }

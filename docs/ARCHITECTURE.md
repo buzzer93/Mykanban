@@ -224,8 +224,9 @@ Theme:
 - board avec composants dedies (`board-toolbar`, `board-column`, `board-task-card`) pour une densite de barre d'outils plus forte et une hierarchie typographique plus nette des cartes
 - layout colonnes desktop stabilise via `grid-auto-columns: minmax(19rem, 1fr)` pour eviter l'ecrasement des colonnes
 - badges cartes compactes (hauteur reduite) et statuts deadline harmonises via tokens de theme (light/dark)
-- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, navigation par swipe horizontal entre colonnes (touchmove `passive: false` + `preventDefault` quand le geste est horizontal), double tap sur une carte detecte sur `touchend` pour envoyer la tache vers la colonne de droite, et drag-to-edge pendant un drag SortableJS (maintenir le doigt 400 ms dans les 60 px du bord gauche/droit pour faire defiler la colonne visible)
-- SortableJS configure avec `delay: 250 ms`, `delayOnTouchOnly: true`, `touchStartThreshold: 5` pour que le drag d'une carte mobile demande un long-press et n'absorbe plus les gestes de swipe / tap
+- en mobile (`< 1024px` ou `pointer: coarse` jusqu'a `1279px`): une seule colonne visible a la fois, montee dans une track `display: flex` translatee horizontalement via `transform: translateX(-N * 100%)` (transition 250 ms), navigation par boutons explicites `‹` / `›` autour du compteur "1/N", et drag-to-edge pendant un drag SortableJS (maintenir le doigt 350 ms dans les 60 px du bord gauche/droit pour faire defiler la colonne visible)
+- au moment d'un drag-to-edge, la carte en cours de drag est reattachee dans la liste de la nouvelle colonne visible (`appendChild`) et un evenement `mousemove` synthetique est dispatche apres l'animation pour que SortableJS recalcule le placeholder/preview sans que l'utilisateur ait a bouger le doigt
+- SortableJS reste en config par defaut sur mobile (drag instantane, sans long-press) ; le swipe horizontal et le double tap ont ete retires car ils entraient en conflit avec le drag et n'etaient pas decouvrables
 
 ## 6. Commandes CLI
 
@@ -369,3 +370,4 @@ Derniere mise a jour structurelle:
 - 2026-04-26: ajout de php-parallel-lint pour corriger l'execution de la tache phplint en pre-commit.
 - 2026-04-26: ajout d'une navigation mobile mono-colonne du board (swipe horizontal + fallback double tap vers la colonne de droite).
 - 2026-04-27: fiabilisation des gestes mobiles du board (SortableJS `delay: 250ms`, swipe `touchmove` en `passive: false`, double tap detecte sur `touchend`, drag-to-edge pendant un drag, breakpoint mobile etendu aux tablettes tactiles via `(pointer: coarse)`, classe `board-mobile-mode` pilotee en JS pour decoupler le mode mobile des seules media queries).
+- 2026-04-27: refonte UX mobile du board — suppression du swipe et du double tap (sources de friction avec le drag), ajout de boutons explicites `‹` / `›` pour naviguer entre colonnes, animation slide horizontale via `translateX` (a la place du `display: none` brutal), drag instantane sur mobile (suppression du long-press SortableJS), drag-to-edge avec reattachement automatique de la carte dans la nouvelle colonne et reveil du placeholder SortableJS via un `mousemove` synthetique.

@@ -17,6 +17,22 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
 
 ---
 
+### 2026-04-27 — Refonte UX mobile du board (drag instantane + boutons de nav)
+
+- Type: feat + refactor
+- Quoi:
+  - Suppression du **swipe horizontal** et du **double tap** : ils entraient en conflit avec le drag (intent ambigue) et n'etaient pas decouvrables.
+  - Ajout de boutons explicites `‹` / `›` autour du compteur "1/N" pour naviguer entre colonnes (cibles de tap fiables, fonctionnent meme quand la colonne active est vide).
+  - Drag instantane sur mobile : suppression du long-press SortableJS (`delay`, `delayOnTouchOnly`, `touchStartThreshold`). On touche une carte, on la deplace, comme sur desktop.
+  - Animation slide horizontale entre colonnes via `transform: translateX(-N * 100%)` sur une track `display: flex / overflow: hidden` (a la place du `display: none` qui etait brutal).
+  - Drag-to-edge fluide : pendant un drag, doigt dans les 60 px du bord pendant 350 ms → la colonne slide ET la carte en cours de drag est reattachee (`appendChild`) dans la nouvelle liste visible, puis un `mousemove` synthetique reveille le placeholder/preview de SortableJS pour ne plus avoir a bouger le doigt.
+  - Nouveaux targets Stimulus: `track`, `navBar`, `prevButton`, `nextButton`. Methodes publiques: `previous()`, `next()`, `goTo(index)`.
+  - Nouvel evenement interne: `board:column-changed` (dispatchee par board-mobile, ecoutee par board-drag pour reattacher la carte en drag).
+- Pourquoi: l'UX precedente cumulait trop de gestes implicites (swipe + double tap + long-press + drag-to-edge), avec des conflits d'intent (swipe/drag) et un retour visuel brutal au changement de colonne. La refonte privilegie la decouvrabilite (boutons), l'instantaneite (drag direct), et la continuite visuelle (animation slide + placeholder qui survit au changement de colonne).
+- Impact: `assets/controllers/board_mobile_controller.js`, `assets/controllers/board_drag_controller.js`, `assets/styles/app.css`, `templates/board/index.html.twig`, `docs/ARCHITECTURE.md`, `README.md`.
+
+---
+
 ### 2026-04-27 — Fiabilisation des gestes mobiles du board
 
 - Type: fix + feat
