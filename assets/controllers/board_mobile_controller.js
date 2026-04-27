@@ -117,7 +117,7 @@ export default class extends Controller {
         }
 
         this.trackTarget.classList.remove('board-mobile-no-snap');
-        this.scrollToIndex(nextIndex, true);
+        this.scrollToIndex(nextIndex, false);
         this.touchInteraction = null;
     }
 
@@ -128,7 +128,7 @@ export default class extends Controller {
         }
 
         this.trackTarget.classList.remove('board-mobile-no-snap');
-        this.scrollToIndex(this.activeIndex, true);
+        this.scrollToIndex(this.activeIndex, false);
         this.touchInteraction = null;
     }
 

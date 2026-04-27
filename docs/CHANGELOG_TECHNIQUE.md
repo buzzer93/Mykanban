@@ -39,6 +39,7 @@ Ce fichier contient la chronologie; la reference architecture stable est dans [A
   - Reglage de sensibilite: `scroll-snap-type` passe de `mandatory` a `proximity` pour limiter les changements de colonne accidentels.
   - Reglage complementaire: ajout d'un seuil de validation avant changement de colonne (distance minimale absolue + relative au viewport), avec desactivation temporaire du snap pendant le geste.
   - Reglage durci: changement de colonne valide uniquement sur le deplacement du doigt (sans tenir compte de l'inertie du scroll) avec seuil releve (`120px` ou `40%` du viewport).
+  - Correction UX: suppression du recentrage lisse apres swipe (retour en recentrage immediat) pour eliminer l'impression de "swipe en deux temps".
 - Pourquoi: eliminer les regressions "swipe detecte mais colonne non affichee" et simplifier fortement la logique mobile.
 - Impact: `assets/controllers/board_mobile_controller.js`, `assets/styles/app.css`, `docs/ARCHITECTURE.md`.
 
